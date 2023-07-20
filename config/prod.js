@@ -1,4 +1,5 @@
 module.exports = {
-  dbURL: 'mongodb://127.0.0.1:27017',
-  dbName : 'tester_db'
+  dbURL:
+    'mongodb+srv://itaykomemi8:1234@cluster0.17sxghz.mongodb.net/?retryWrites=true&w=majority',
+  dbName: 'contact_db',
 }
