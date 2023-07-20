@@ -110,12 +110,9 @@ function _buildCriteria(filterBy) {
                 username: txtCriteria
             },
             {
-                fullname: txtCriteria
+                fullName: txtCriteria
             }
         ]
-    }
-    if (filterBy.minBalance) {
-        criteria.score = { $gte: filterBy.minBalance }
     }
     return criteria
 }
