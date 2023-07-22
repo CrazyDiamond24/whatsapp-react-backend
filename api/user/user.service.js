@@ -23,7 +23,6 @@ async function query() {
     // user.createdAt = Date.now() - (1000 * 60 * 60 * 24 * 3) // 3 days ago
     // return user
     var contacts = await collection.find().toArray()
-    console.log('contactsssssssss', contacts)
     return contacts
     // }
     // )
@@ -89,9 +88,13 @@ async function add(user) {
     const userToAdd = {
       username: user.username,
       password: user.password,
-      fullname: user.fullname,
-      imgUrl: user.imgUrl,
-      score: 100,
+      fullName: user.fullName,
+      img: user.img,
+      status: user.status,
+      story: user.story,
+      groups: user.groups,
+      contacts: user.contacts,
+      msgs: user.msgs,
     }
     const collection = await dbService.getCollection('contact')
     await collection.insertOne(userToAdd)
