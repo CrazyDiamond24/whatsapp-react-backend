@@ -9,23 +9,15 @@ module.exports = {
   remove,
   update,
   add,
+  addMessage,
 }
 
 async function query() {
-  // const criteria = _buildCriteria(filterBy)
   try {
     const collection = await dbService.getCollection('contact')
-    // var users = await collection.find(criteria).toArray()
-    // users = users.map((user) => {
-    // delete user.password
-    // user.createdAt = ObjectId(user._id).getTimestamp()
-    // Returning fake fresh data
-    // user.createdAt = Date.now() - (1000 * 60 * 60 * 24 * 3) // 3 days ago
-    // return user
+
     var contacts = await collection.find().toArray()
     return contacts
-    // }
-    // )
   } catch (err) {
     logger.error('cannot find users', err)
     throw err
@@ -98,11 +90,26 @@ async function add(user) {
     }
     const collection = await dbService.getCollection('contact')
     await collection.insertOne(userToAdd)
+    console.log('userToAdd', userToAdd)
     return userToAdd
   } catch (err) {
     logger.error('cannot add user', err)
     throw err
   }
+}
+async function addMessage(userId, message) {
+  const collection = await dbService.getCollection('contact')
+  const user = await collection.findOne({ _id: new ObjectId(userId) })
+
+  // Ensure the user has a msgs array
+  if (!user.msgs) user.msgs = []
+
+  // Add the message to the array
+  user.msgs.push(message)
+
+  // Update the user in the database
+  await collection.updateOne({ _id: new ObjectId(userId) }, { $set: user })
+  return message
 }
 
 function _buildCriteria(filterBy) {
