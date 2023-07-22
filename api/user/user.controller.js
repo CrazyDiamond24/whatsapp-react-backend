@@ -14,10 +14,9 @@ async function getUser(req, res) {
 
 async function getUsers(req, res) {
   try {
-    const filterBy = {
-      txt: req.query?.txt || '',
-    }
-    const users = await userService.query()
+    const loggedInUserId = req.params.loggedInUserId
+    console.log('loggedInUserId', loggedInUserId)
+    const users = await userService.query(loggedInUserId)
     res.send(users)
   } catch (err) {
     logger.error('Failed to get users', err)
@@ -56,6 +55,17 @@ async function addMessage(req, res) {
     res.status(500).send({ err: 'Failed to add message' })
   }
 }
+async function addContact(req, res) {
+  try {
+    const userId = req.params.id
+    const contactName = req.body.contactName
+    const contact = await userService.addContact(userId, contactName)
+    res.send(contact)
+  } catch (err) {
+    logger.error('Failed to add contact', err)
+    res.status(500).send({ err: 'Failed to add contact' })
+  }
+}
 
 module.exports = {
   getUser,
@@ -63,4 +73,5 @@ module.exports = {
   addMessage,
   deleteUser,
   updateUser,
+  addContact,
 }

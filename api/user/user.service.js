@@ -10,13 +10,25 @@ module.exports = {
   update,
   add,
   addMessage,
+  addContact,
 }
-
-async function query() {
+async function query(loggedInUserId) {
   try {
     const collection = await dbService.getCollection('contact')
-
     var contacts = await collection.find().toArray()
+    const loggedInUser = await collection.findOne({
+      _id: ObjectId(loggedInUserId),
+    })
+
+    console.log('loggedInUser:', loggedInUser)
+    console.log('loggedInUser.contacts:', loggedInUser.contacts)
+
+    // const contactsToReturn = contacts.filter((c) =>
+    //   loggedInUser.contacts?.map((contact) => contact._id === c._id)
+    // )
+
+    // console.log('contactsToReturn:', contactsToReturn)
+
     return contacts
   } catch (err) {
     logger.error('cannot find users', err)
@@ -24,10 +36,25 @@ async function query() {
   }
 }
 
+async function addContact(userId, contactName) {
+  const collection = await dbService.getCollection('contact')
+  const user = await collection.findOne({ _id: new ObjectId(userId) })
+
+  const contact = await collection.findOne({ username: contactName })
+
+  if (!user.contacts) user.contacts = []
+
+  // Add the message to the array
+  user.contacts.push(contact)
+  await collection.updateOne({ _id: new ObjectId(userId) }, { $set: user })
+  return contact
+}
+
 async function getById(userId) {
   try {
     const collection = await dbService.getCollection('contact')
     const user = await collection.findOne({ _id: new ObjectId(userId) })
+    console.log('user', user)
     delete user.password
 
     return user
