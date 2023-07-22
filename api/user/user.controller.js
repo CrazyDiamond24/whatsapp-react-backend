@@ -14,9 +14,7 @@ async function getUser(req, res) {
 
 async function getUsers(req, res) {
   try {
-    const loggedInUserId = req.params.loggedInUserId
-    console.log('loggedInUserId', loggedInUserId)
-    const users = await userService.query(loggedInUserId)
+    const users = await userService.query()
     res.send(users)
   } catch (err) {
     logger.error('Failed to get users', err)

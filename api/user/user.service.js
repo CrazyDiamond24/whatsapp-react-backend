@@ -16,12 +16,12 @@ async function query(loggedInUserId) {
   try {
     const collection = await dbService.getCollection('contact')
     var contacts = await collection.find().toArray()
-    const loggedInUser = await collection.findOne({
-      _id: ObjectId(loggedInUserId),
-    })
+    // const loggedInUser = await collection.findOne({
+    //   _id: ObjectId(loggedInUserId),
+    // })
 
-    console.log('loggedInUser:', loggedInUser)
-    console.log('loggedInUser.contacts:', loggedInUser.contacts)
+    // console.log('loggedInUser:', loggedInUser)
+    // console.log('loggedInUser.contacts:', loggedInUser.contacts)
 
     // const contactsToReturn = contacts.filter((c) =>
     //   loggedInUser.contacts?.map((contact) => contact._id === c._id)
