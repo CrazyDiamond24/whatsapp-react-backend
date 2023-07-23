@@ -11,6 +11,7 @@ module.exports = {
   add,
   addMessage,
   addContact,
+  updateMsg,
 }
 async function query(loggedInUserId) {
   try {
@@ -97,6 +98,47 @@ async function update(user) {
     return userToSave
   } catch (err) {
     logger.error(`cannot update user ${user._id}`, err)
+    throw err
+  }
+}
+// async function updateMsg(msgid, senderId) {
+//   try {
+//     const msg = {
+//       _id: ObjectId(user._id), // needed for the returnd obj
+//       fullname: user.fullname,
+//       score: user.score,
+//     }
+//     const collection = await dbService.getCollection('contact')
+//     await collection.updateOne({ _id: userToSave._id }, { $set: userToSave })
+//     return userToSave
+//   } catch (err) {
+//     logger.error(`cannot update user ${user._id}`, err)
+//     throw err
+//   }
+// }
+
+async function updateMsg(msgId, senderId) {
+  try {
+    const collection = await dbService.getCollection('contact')
+    const result = await collection.updateOne(
+      {
+        _id: ObjectId(senderId),
+        'msgs._id': ObjectId(msgId), 
+      },
+      {
+        $set: {
+          'msgs.$.content': 'Messege deleted', 
+        },
+      }
+    )
+
+    if (result.modifiedCount === 1) {
+      return 'Message content updated successfully'
+    } else {
+      throw new Error('Message not found or not updated')
+    }
+  } catch (err) {
+    logger.error(`Cannot update message with _id ${msgId} for senderId ${senderId}`, err)
     throw err
   }
 }

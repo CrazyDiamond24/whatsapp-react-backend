@@ -53,6 +53,19 @@ async function addMessage(req, res) {
     res.status(500).send({ err: 'Failed to add message' })
   }
 }
+
+async function updateMsg(req, res) {
+  try {
+    const {msgId , senderId} = req.body
+    await userService.updateMsg(msgId,senderId)
+    res.send({ msg: 'msg updated successfully' })
+  } catch (err) {
+    logger.error('Failed to update msg', err)
+    res.status(500).send({ err: 'Failed to update msg' })
+  }
+}
+
+
 async function addContact(req, res) {
   try {
     const userId = req.params.id
@@ -72,4 +85,5 @@ module.exports = {
   deleteUser,
   updateUser,
   addContact,
+  updateMsg,
 }
