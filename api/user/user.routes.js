@@ -10,6 +10,7 @@ const {
   updateUser,
   addMessage,
   addContact,
+  removeContact,
   updateMessage,
 } = require('./user.controller')
 const router = express.Router()
@@ -24,7 +25,7 @@ router.put('/message/edit', updateMessage)
 router.put('/:id', requireAuth, updateUser)
 router.delete('/:id', requireAuth, deleteUser)
 router.post('/:id/add-contact', addContact)
-
+router.delete('/:id/remove-contact/:contactId', removeContact)
 // router.put('/:id',  requireAuth, updateUser)
 // router.delete('/:id',  requireAuth, requireAdmin, deleteUser)
 

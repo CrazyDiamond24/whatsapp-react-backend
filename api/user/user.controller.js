@@ -65,7 +65,6 @@ async function updateMessage(req, res) {
   }
 }
 
-
 async function addContact(req, res) {
   try {
     const userId = req.params.id
@@ -77,6 +76,15 @@ async function addContact(req, res) {
     res.status(500).send({ err: 'Failed to add contact' })
   }
 }
+async function removeContact(req, res) {
+  const { id, contactId } = req.params
+  try {
+    await userService.removeContact(id, contactId)
+    res.status(200).end()
+  } catch (error) {
+    res.status(500).send({ error: 'failed to remove contact' })
+  }
+}
 
 module.exports = {
   getUser,
@@ -85,5 +93,6 @@ module.exports = {
   deleteUser,
   updateUser,
   addContact,
+  removeContact,
   updateMessage,
 }
