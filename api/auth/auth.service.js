@@ -15,7 +15,7 @@ async function login(username, password) {
   logger.debug(`auth.service - login with username: ${username}`)
 
   const user = await userService.getByUsername(username)
-  if (!user) return Promise.reject('Invalid username or password')
+  if (!user) throw new Error('Invalid username or password')
 
   delete user.password
   user._id = user._id.toString()
