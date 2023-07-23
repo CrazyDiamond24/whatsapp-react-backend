@@ -11,6 +11,7 @@ module.exports = {
   add,
   addMessage,
   addContact,
+  removeContact,
 }
 async function query(loggedInUserId) {
   try {
@@ -48,6 +49,35 @@ async function addContact(userId, contactName) {
   user.contacts.push(contact)
   await collection.updateOne({ _id: new ObjectId(userId) }, { $set: user })
   return contact
+}
+async function removeContact(userId, contactId) {
+  try {
+    const collection = await dbService.getCollection('contact')
+    const user = await collection.findOne({ _id: new ObjectId(userId) })
+    console.log('userrrrrrrrrrrrr remove', user)
+    if (user.contacts) {
+      console.log('user.contacts remove ', user.contacts)
+      const contactIndex = user.contacts.findIndex(
+        (contact) => contact._id === contactId
+      )
+      if (contactIndex > -1) {
+        user.contacts.splice(contactIndex, 1)
+        console.log('user afterrrrrrrrrrrrrrrrrrrrrrrrrr', user)
+        await collection.updateOne(
+          { _id: new ObjectId(userId) },
+          { $set: user }
+        )
+        return true
+      }
+    }
+    return false
+  } catch (err) {
+    logger.error(
+      `Failed to remove contact with id: ${contactId} for user with id: ${userId}`,
+      err
+    )
+    throw err
+  }
 }
 
 async function getById(userId) {
