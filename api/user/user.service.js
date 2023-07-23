@@ -1,6 +1,6 @@
-const dbService = require('../../services/db.service')
-const logger = require('../../services/logger.service')
-const ObjectId = require('mongodb').ObjectId
+const dbService = require("../../services/db.service")
+const logger = require("../../services/logger.service")
+const ObjectId = require("mongodb").ObjectId
 
 module.exports = {
   query,
@@ -15,7 +15,7 @@ module.exports = {
 }
 async function query(loggedInUserId) {
   try {
-    const collection = await dbService.getCollection('contact')
+    const collection = await dbService.getCollection("contact")
     var contacts = await collection.find().toArray()
     // const loggedInUser = await collection.findOne({
     //   _id: ObjectId(loggedInUserId),
@@ -32,13 +32,13 @@ async function query(loggedInUserId) {
 
     return contacts
   } catch (err) {
-    logger.error('cannot find users', err)
+    logger.error("cannot find users", err)
     throw err
   }
 }
 
 async function addContact(userId, contactName) {
-  const collection = await dbService.getCollection('contact')
+  const collection = await dbService.getCollection("contact")
   const user = await collection.findOne({ _id: new ObjectId(userId) })
 
   const contact = await collection.findOne({ username: contactName })
@@ -53,9 +53,8 @@ async function addContact(userId, contactName) {
 
 async function getById(userId) {
   try {
-    const collection = await dbService.getCollection('contact')
+    const collection = await dbService.getCollection("contact")
     const user = await collection.findOne({ _id: new ObjectId(userId) })
-    console.log('user', user)
     delete user.password
 
     return user
@@ -66,7 +65,7 @@ async function getById(userId) {
 }
 async function getByUsername(username) {
   try {
-    const collection = await dbService.getCollection('contact')
+    const collection = await dbService.getCollection("contact")
     const user = await collection.findOne({ username })
     return user
   } catch (err) {
@@ -77,7 +76,7 @@ async function getByUsername(username) {
 
 async function remove(userId) {
   try {
-    const collection = await dbService.getCollection('contact')
+    const collection = await dbService.getCollection("contact")
     await collection.deleteOne({ _id: ObjectId(userId) })
   } catch (err) {
     logger.error(`cannot remove user ${userId}`, err)
@@ -93,7 +92,7 @@ async function update(user) {
       fullname: user.fullname,
       score: user.score,
     }
-    const collection = await dbService.getCollection('contact')
+    const collection = await dbService.getCollection("contact")
     await collection.updateOne({ _id: userToSave._id }, { $set: userToSave })
     return userToSave
   } catch (err) {
@@ -119,30 +118,33 @@ async function update(user) {
 
 async function updateMessage(msgId, senderId) {
   try {
-    const collection = await dbService.getCollection('contact')
+    const collection = await dbService.getCollection("contact")
     const result = await collection.updateOne(
       {
         _id: ObjectId(senderId),
-        'msgs._id': ObjectId(msgId), 
+        "msgs.id": msgId,
       },
       {
         $set: {
-          'msgs.$.content': 'Messege deleted', 
+          "msgs.$.content": "Messege deleted",
         },
       }
     )
+    console.log(result.modifiedCount)
 
     if (result.modifiedCount === 1) {
-      return 'Message content updated successfully'
+      return "Message content updated successfully"
     } else {
-      throw new Error('Message not found or not updated')
+      throw new Error("Message not found or not updated")
     }
   } catch (err) {
-    logger.error(`Cannot update message with _id ${msgId} for senderId ${senderId}`, err)
+    logger.error(
+      `Cannot update message with _id ${msgId} for senderId ${senderId}`,
+      err
+    )
     throw err
   }
 }
-
 async function add(user) {
   try {
     // peek only updatable fields!
@@ -157,17 +159,16 @@ async function add(user) {
       contacts: user.contacts,
       msgs: user.msgs,
     }
-    const collection = await dbService.getCollection('contact')
+    const collection = await dbService.getCollection("contact")
     await collection.insertOne(userToAdd)
-    console.log('userToAdd', userToAdd)
     return userToAdd
   } catch (err) {
-    logger.error('cannot add user', err)
+    logger.error("cannot add user", err)
     throw err
   }
 }
 async function addMessage(userId, message) {
-  const collection = await dbService.getCollection('contact')
+  const collection = await dbService.getCollection("contact")
   const user = await collection.findOne({ _id: new ObjectId(userId) })
 
   // Ensure the user has a msgs array
@@ -184,7 +185,7 @@ async function addMessage(userId, message) {
 function _buildCriteria(filterBy) {
   const criteria = {}
   if (filterBy.txt) {
-    const txtCriteria = { $regex: filterBy.txt, $options: 'i' }
+    const txtCriteria = { $regex: filterBy.txt, $options: "i" }
     criteria.$or = [
       {
         username: txtCriteria,

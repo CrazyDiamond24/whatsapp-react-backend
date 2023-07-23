@@ -57,7 +57,7 @@ async function addMessage(req, res) {
 async function updateMessage(req, res) {
   try {
     const {msgId , senderId} = req.body
-    await userService.updateMsg(msgId,senderId)
+    await userService.updateMessage(msgId,senderId)
     res.send({ msg: 'msg updated successfully' })
   } catch (err) {
     logger.error('Failed to update msg', err)

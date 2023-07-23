@@ -11,7 +11,6 @@ async function login(req, res) {
     res.json(user)
   } catch (err) {
     logger.error('Failed to Login ' + err)
-    console.log('no login shlack')
     res.status(401).send({ err: 'Failed to login' })
     // throw new Error('Invalid username or password')
   }
@@ -29,7 +28,6 @@ async function signup(req, res) {
     logger.info('User signup:', user)
     const loginToken = authService.getLoginToken(user)
     res.cookie('loginToken', loginToken, { sameSite: 'None', secure: true })
-    console.log('userrrrrrrrrrrrrrrrrrrrrrrrrrrrrr before send', user)
     res.json(user)
   } catch (err) {
     logger.error('Failed to signup ' + err)
