@@ -54,7 +54,7 @@ async function addMessage(req, res) {
   }
 }
 
-async function updateMsg(req, res) {
+async function updateMessage(req, res) {
   try {
     const {msgId , senderId} = req.body
     await userService.updateMsg(msgId,senderId)
@@ -85,5 +85,5 @@ module.exports = {
   deleteUser,
   updateUser,
   addContact,
-  updateMsg,
+  updateMessage,
 }

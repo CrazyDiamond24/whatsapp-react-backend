@@ -11,7 +11,7 @@ module.exports = {
   add,
   addMessage,
   addContact,
-  updateMsg,
+  updateMessage,
 }
 async function query(loggedInUserId) {
   try {
@@ -117,7 +117,7 @@ async function update(user) {
 //   }
 // }
 
-async function updateMsg(msgId, senderId) {
+async function updateMessage(msgId, senderId) {
   try {
     const collection = await dbService.getCollection('contact')
     const result = await collection.updateOne(
