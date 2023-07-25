@@ -9,10 +9,10 @@ module.exports = {
   remove,
   update,
   add,
-  addMessage,
+  addMsg,
   addContact,
   removeContact,
-  updateMessage,
+  updateMsg,
 }
 async function query(loggedInUserId) {
   try {
@@ -46,7 +46,6 @@ async function addContact(userId, contactName) {
 
   if (!user.contacts) user.contacts = []
 
-  // Add the message to the array
   user.contacts.push(contact)
   await collection.updateOne({ _id: new ObjectId(userId) }, { $set: user })
   return contact
@@ -146,7 +145,7 @@ async function update(user) {
 //   }
 // }
 
-async function updateMessage(msgId, senderId) {
+async function updateMsg(msgId, senderId) {
   try {
     const collection = await dbService.getCollection("contact")
     const result = await collection.updateOne(
@@ -163,7 +162,7 @@ async function updateMessage(msgId, senderId) {
     console.log(result.modifiedCount)
 
     if (result.modifiedCount === 1) {
-      return "Message content updated successfully"
+      return "Msg content updated successfully"
     } else {
       throw new Error("Message not found or not updated")
     }
@@ -197,19 +196,19 @@ async function add(user) {
     throw err
   }
 }
-async function addMessage(userId, message) {
+async function addMsg(userId, msg) {
   const collection = await dbService.getCollection("contact")
   const user = await collection.findOne({ _id: new ObjectId(userId) })
 
   // Ensure the user has a msgs array
   if (!user.msgs) user.msgs = []
 
-  // Add the message to the array
-  user.msgs.push(message)
+  // Add the msg to the array
+  user.msgs.push(msg)
 
   // Update the user in the database
   await collection.updateOne({ _id: new ObjectId(userId) }, { $set: user })
-  return message
+  return msg
 }
 
 function _buildCriteria(filterBy) {
