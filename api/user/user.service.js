@@ -156,7 +156,7 @@ async function updateMessage(msgId, senderId) {
       },
       {
         $set: {
-          "msgs.$.content": "Messege deleted",
+          "msgs.$.content": "Message deleted",
         },
       }
     )
@@ -169,7 +169,7 @@ async function updateMessage(msgId, senderId) {
     }
   } catch (err) {
     logger.error(
-      `Cannot update message with _id ${msgId} for senderId ${senderId}`,
+      `Cannot update message with id ${msgId} for senderId ${senderId}`,
       err
     )
     throw err

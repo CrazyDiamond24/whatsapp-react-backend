@@ -57,6 +57,8 @@ async function addMessage(req, res) {
 async function updateMessage(req, res) {
   try {
     const {msgId , senderId} = req.body
+    console.log('http msgid' , msgId)
+    console.log('http sender' , senderId)
     await userService.updateMessage(msgId,senderId)
     res.send({ msg: 'msg updated successfully' })
   } catch (err) {
