@@ -56,14 +56,32 @@ async function addMsg(req, res) {
 
 async function updateMsg(req, res) {
   try {
-    const {msgId , senderId} = req.body
-    await userService.updateMsg(msgId,senderId)
+    const {msgId , senderId , recipientId} = req.body
+    await userService.updateMsg(msgId,senderId, recipientId)
     res.send({ msg: 'message updated successfully' })
   } catch (err) {
     logger.error('Failed to update message', err)
     res.status(500).send({ err: 'Failed to update message' })
   }
 }
+
+// backend controller
+async function getUserMessages(req, res) {
+  try {
+    const { userId, loggedInUserId } = req.params;
+
+    // Fetch the user messages from the database
+    const messages = await userService.getUserMessages(userId, loggedInUserId);
+
+    res.status(200).json(messages);
+  } catch (err) {
+    logger.error('Failed to get user messages', err);
+    res.status(500).send({ err: 'Failed to get user messages' });
+  }
+}
+
+// ... other controller functions ...
+
 
 async function addContact(req, res) {
   try {
@@ -95,4 +113,5 @@ module.exports = {
   addContact,
   removeContact,
   updateMsg,
+  getUserMessages
 }

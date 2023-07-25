@@ -1,6 +1,6 @@
-const dbService = require("../../services/db.service")
-const logger = require("../../services/logger.service")
-const ObjectId = require("mongodb").ObjectId
+const dbService = require('../../services/db.service')
+const logger = require('../../services/logger.service')
+const ObjectId = require('mongodb').ObjectId
 
 module.exports = {
   query,
@@ -16,7 +16,7 @@ module.exports = {
 }
 async function query(loggedInUserId) {
   try {
-    const collection = await dbService.getCollection("contact")
+    const collection = await dbService.getCollection('contact')
     var contacts = await collection.find().toArray()
     // const loggedInUser = await collection.findOne({
     //   _id: ObjectId(loggedInUserId),
@@ -33,13 +33,13 @@ async function query(loggedInUserId) {
 
     return contacts
   } catch (err) {
-    logger.error("cannot find users", err)
+    logger.error('cannot find users', err)
     throw err
   }
 }
 
 async function addContact(userId, contactName) {
-  const collection = await dbService.getCollection("contact")
+  const collection = await dbService.getCollection('contact')
   const user = await collection.findOne({ _id: new ObjectId(userId) })
 
   const contact = await collection.findOne({ username: contactName })
@@ -52,7 +52,7 @@ async function addContact(userId, contactName) {
 }
 async function removeContact(userId, contactId) {
   try {
-    const collection = await dbService.getCollection("contact")
+    const collection = await dbService.getCollection('contact')
     const user = await collection.findOne({ _id: new ObjectId(userId) })
     console.log('userrrrrrrrrrrrr remove', user)
     if (user.contacts) {
@@ -82,7 +82,7 @@ async function removeContact(userId, contactId) {
 
 async function getById(userId) {
   try {
-    const collection = await dbService.getCollection("contact")
+    const collection = await dbService.getCollection('contact')
     const user = await collection.findOne({ _id: new ObjectId(userId) })
     delete user.password
 
@@ -94,7 +94,7 @@ async function getById(userId) {
 }
 async function getByUsername(username) {
   try {
-    const collection = await dbService.getCollection("contact")
+    const collection = await dbService.getCollection('contact')
     const user = await collection.findOne({ username })
     return user
   } catch (err) {
@@ -105,7 +105,7 @@ async function getByUsername(username) {
 
 async function remove(userId) {
   try {
-    const collection = await dbService.getCollection("contact")
+    const collection = await dbService.getCollection('contact')
     await collection.deleteOne({ _id: ObjectId(userId) })
   } catch (err) {
     logger.error(`cannot remove user ${userId}`, err)
@@ -121,7 +121,7 @@ async function update(user) {
       fullname: user.fullname,
       score: user.score,
     }
-    const collection = await dbService.getCollection("contact")
+    const collection = await dbService.getCollection('contact')
     await collection.updateOne({ _id: userToSave._id }, { $set: userToSave })
     return userToSave
   } catch (err) {
@@ -145,35 +145,47 @@ async function update(user) {
 //   }
 // }
 
-async function updateMsg(msgId, senderId) {
+async function updateMsg(msgId, senderId, recipientId) {
   try {
-    const collection = await dbService.getCollection("contact")
-    const result = await collection.updateOne(
-      {
-        _id: ObjectId(senderId),
-        "msgs.id": msgId,
-      },
-      {
-        $set: {
-          "msgs.$.content": "Message deleted",
-        },
-      }
-    )
-    console.log(result.modifiedCount)
+    const collection = await dbService.getCollection('contact')
 
-    if (result.modifiedCount === 1) {
-      return "Msg content updated successfully"
+    const updateMessageContent = async (userId) => {
+      const result = await collection.updateOne(
+        {
+          _id: ObjectId(userId),
+          'msgs.id': msgId,
+        },
+        {
+          $set: {
+            'msgs.$.content': 'Message deleted',
+          },
+        }
+      )
+      return result.modifiedCount
+    }
+
+    const senderResult = await updateMessageContent(senderId)
+    const recipientResult = await updateMessageContent(recipientId)
+
+    console.log('Sender result modified count:', senderResult)
+    console.log('Recipient result modified count:', recipientResult)
+
+    if (senderResult === 1 && recipientResult === 1) {
+      return 'Message content updated successfully for both sender and recipient'
     } else {
-      throw new Error("Message not found or not updated")
+      throw new Error(
+        'Message not found or not updated for either sender or recipient'
+      )
     }
   } catch (err) {
     logger.error(
-      `Cannot update message with id ${msgId} for senderId ${senderId}`,
+      `Cannot update message with id ${msgId} for senderId ${senderId} and recipientId ${recipientId}`,
       err
     )
     throw err
   }
 }
+
 async function add(user) {
   try {
     // peek only updatable fields!
@@ -188,19 +200,18 @@ async function add(user) {
       contacts: user.contacts,
       msgs: user.msgs,
     }
-    const collection = await dbService.getCollection("contact")
+    const collection = await dbService.getCollection('contact')
     await collection.insertOne(userToAdd)
     return userToAdd
   } catch (err) {
-    logger.error("cannot add user", err)
+    logger.error('cannot add user', err)
     throw err
   }
 }
 async function addMsg(userId, msg) {
-  const collection = await dbService.getCollection("contact")
+  const collection = await dbService.getCollection('contact')
   const user = await collection.findOne({ _id: new ObjectId(userId) })
 
-  // Ensure the user has a msgs array
   if (!user.msgs) user.msgs = []
 
   // Add the msg to the array
@@ -214,7 +225,7 @@ async function addMsg(userId, msg) {
 function _buildCriteria(filterBy) {
   const criteria = {}
   if (filterBy.txt) {
-    const txtCriteria = { $regex: filterBy.txt, $options: "i" }
+    const txtCriteria = { $regex: filterBy.txt, $options: 'i' }
     criteria.$or = [
       {
         username: txtCriteria,
