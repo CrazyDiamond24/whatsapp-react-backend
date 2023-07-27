@@ -42,6 +42,7 @@ async function updateUser(req, res) {
     res.status(500).send({ err: 'Failed to update user' })
   }
 }
+
 async function addMessage(req, res) {
   try {
     const userId = req.params.id
