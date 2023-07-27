@@ -15,7 +15,7 @@ function getTime() {
 }
 
 function isError(e) {
-    return e && e.stack && e.message
+    return e && e.stack && e.msg
 }
 
 function doLog(level, ...args) {

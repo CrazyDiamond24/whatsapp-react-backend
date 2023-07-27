@@ -9,10 +9,10 @@ module.exports = {
   remove,
   update,
   add,
-  addMessage,
+  addMsg,
   addContact,
   removeContact,
-  updateMessage,
+  updateMsg,
 }
 async function query(loggedInUserId) {
   try {
@@ -46,7 +46,6 @@ async function addContact(userId, contactName) {
 
   if (!user.contacts) user.contacts = []
 
-  // Add the message to the array
   user.contacts.push(contact)
   await collection.updateOne({ _id: new ObjectId(userId) }, { $set: user })
   return contact
@@ -82,7 +81,6 @@ async function getById(userId) {
   try {
     const collection = await dbService.getCollection('contact')
     const user = await collection.findOne({ _id: new ObjectId(userId) })
-    console.log('user', user)
     delete user.password
 
     return user
@@ -146,29 +144,41 @@ async function update(user) {
 //   }
 // }
 
-async function updateMessage(msgId, senderId) {
+async function updateMsg(msgId, senderId, recipientId) {
   try {
     const collection = await dbService.getCollection('contact')
-    const result = await collection.updateOne(
-      {
-        _id: ObjectId(senderId),
-        'msgs._id': ObjectId(msgId),
-      },
-      {
-        $set: {
-          'msgs.$.content': 'Messege deleted',
-        },
-      }
-    )
 
-    if (result.modifiedCount === 1) {
-      return 'Message content updated successfully'
+    const updateMessageContent = async (userId) => {
+      const result = await collection.updateOne(
+        {
+          _id: ObjectId(userId),
+          'msgs.id': msgId,
+        },
+        {
+          $set: {
+            'msgs.$.content': 'Message deleted',
+          },
+        }
+      )
+      return result.modifiedCount
+    }
+
+    const senderResult = await updateMessageContent(senderId)
+    const recipientResult = await updateMessageContent(recipientId)
+
+    console.log('Sender result modified count:', senderResult)
+    console.log('Recipient result modified count:', recipientResult)
+
+    if (senderResult === 1 && recipientResult === 1) {
+      return 'Message content updated successfully for both sender and recipient'
     } else {
-      throw new Error('Message not found or not updated')
+      throw new Error(
+        'Message not found or not updated for either sender or recipient'
+      )
     }
   } catch (err) {
     logger.error(
-      `Cannot update message with _id ${msgId} for senderId ${senderId}`,
+      `Cannot update message with id ${msgId} for senderId ${senderId} and recipientId ${recipientId}`,
       err
     )
     throw err
@@ -191,26 +201,24 @@ async function add(user) {
     }
     const collection = await dbService.getCollection('contact')
     await collection.insertOne(userToAdd)
-    console.log('userToAdd', userToAdd)
     return userToAdd
   } catch (err) {
     logger.error('cannot add user', err)
     throw err
   }
 }
-async function addMessage(userId, message) {
+async function addMsg(userId, msg) {
   const collection = await dbService.getCollection('contact')
   const user = await collection.findOne({ _id: new ObjectId(userId) })
 
-  // Ensure the user has a msgs array
   if (!user.msgs) user.msgs = []
 
-  // Add the message to the array
-  user.msgs.push(message)
+  // Add the msg to the array
+  user.msgs.push(msg)
 
   // Update the user in the database
   await collection.updateOne({ _id: new ObjectId(userId) }, { $set: user })
-  return message
+  return msg
 }
 
 function _buildCriteria(filterBy) {

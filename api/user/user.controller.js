@@ -42,29 +42,45 @@ async function updateUser(req, res) {
     res.status(500).send({ err: 'Failed to update user' })
   }
 }
-
-async function addMessage(req, res) {
+async function addMsg(req, res) {
   try {
     const userId = req.params.id
-    const message = req.body
-    const addedMessage = await userService.addMessage(userId, message)
-    res.send(addedMessage)
+    const msg = req.body
+    const addedMsg = await userService.addMsg(userId, msg)
+    res.send(addedMsg)
   } catch (err) {
     logger.error('Failed to add message', err)
     res.status(500).send({ err: 'Failed to add message' })
   }
 }
 
-async function updateMessage(req, res) {
+async function updateMsg(req, res) {
   try {
-    const { msgId, senderId } = req.body
-    await userService.updateMsg(msgId, senderId)
-    res.send({ msg: 'msg updated successfully' })
+    const { msgId, senderId, recipientId } = req.body
+    await userService.updateMsg(msgId, senderId, recipientId)
+    res.send({ msg: 'message updated successfully' })
   } catch (err) {
-    logger.error('Failed to update msg', err)
-    res.status(500).send({ err: 'Failed to update msg' })
+    logger.error('Failed to update message', err)
+    res.status(500).send({ err: 'Failed to update message' })
   }
 }
+
+// backend controller
+async function getUserMessages(req, res) {
+  try {
+    const { userId, loggedInUserId } = req.params
+
+    // Fetch the user messages from the database
+    const messages = await userService.getUserMessages(userId, loggedInUserId)
+
+    res.status(200).json(messages)
+  } catch (err) {
+    logger.error('Failed to get user messages', err)
+    res.status(500).send({ err: 'Failed to get user messages' })
+  }
+}
+
+// ... other controller functions ...
 
 async function addContact(req, res) {
   try {
@@ -90,10 +106,11 @@ async function removeContact(req, res) {
 module.exports = {
   getUser,
   getUsers,
-  addMessage,
+  addMsg,
   deleteUser,
   updateUser,
   addContact,
   removeContact,
-  updateMessage,
+  updateMsg,
+  getUserMessages,
 }
