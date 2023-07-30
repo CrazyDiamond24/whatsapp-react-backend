@@ -47,6 +47,7 @@ async function addMsg(req, res) {
     const userId = req.params.id
     const msg = req.body
     const addedMsg = await userService.addMsg(userId, msg)
+    console.log('userId controller', userId)
     res.send(addedMsg)
   } catch (err) {
     logger.error('Failed to add message', err)
