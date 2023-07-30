@@ -54,15 +54,12 @@ async function removeContact(userId, contactId) {
   try {
     const collection = await dbService.getCollection('contact')
     const user = await collection.findOne({ _id: new ObjectId(userId) })
-    console.log('userrrrrrrrrrrrr remove', user)
     if (user.contacts) {
-      console.log('user.contacts remove ', user.contacts)
       const contactIndex = user.contacts.findIndex(
-        (contact) => contact._id === contactId
+        (contact) => contact._id.toString() === contactId
       )
       if (contactIndex > -1) {
         user.contacts.splice(contactIndex, 1)
-        console.log('user afterrrrrrrrrrrrrrrrrrrrrrrrrr', user)
         await collection.updateOne(
           { _id: new ObjectId(userId) },
           { $set: user }
@@ -118,8 +115,9 @@ async function update(user) {
     // peek only updatable properties
     const userToSave = {
       _id: ObjectId(user._id), // needed for the returnd obj
-      fullname: user.fullname,
-      score: user.score,
+      username: user.username,
+      status: user.status,
+      img: user.img,
     }
     const collection = await dbService.getCollection('contact')
     await collection.updateOne({ _id: userToSave._id }, { $set: userToSave })
@@ -129,6 +127,7 @@ async function update(user) {
     throw err
   }
 }
+
 // async function updateMsg(msgid, senderId) {
 //   try {
 //     const msg = {
