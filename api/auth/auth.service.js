@@ -69,7 +69,7 @@ function getLoginToken(user) {
 
 function validateToken(loginToken) {
   try {
-    logger.debug('GOT:', loginToken)
+    // logger.debug('GOT:', loginToken)
     const json = cryptr.decrypt(loginToken)
     const loggedinUser = JSON.parse(json)
     return loggedinUser

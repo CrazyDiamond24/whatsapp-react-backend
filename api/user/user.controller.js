@@ -46,8 +46,8 @@ async function addMsg(req, res) {
   try {
     const userId = req.params.id
     const msg = req.body
+    console.log('**********userId controller ********', userId)
     const addedMsg = await userService.addMsg(userId, msg)
-    console.log('userId controller', userId)
     res.send(addedMsg)
   } catch (err) {
     logger.error('Failed to add message', err)
@@ -68,11 +68,12 @@ async function updateMsg(req, res) {
 
 // backend controller
 async function getUserMessages(req, res) {
+  console.log('are you ever called?')
   try {
     const { userId, loggedInUserId } = req.params
 
     // Fetch the user messages from the database
-    const messages = await userService.getUserMessages(userId, loggedInUserId)
+    const messages = await msgService.getUserMessages(userId, loggedInUserId)
 
     res.status(200).json(messages)
   } catch (err) {
