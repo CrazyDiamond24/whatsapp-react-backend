@@ -208,6 +208,12 @@ async function add(user) {
   }
 }
 async function addMsg(userId, msg) {
+  // Check if the message content is empty and return if it is
+  if (!msg.content || msg.content.trim() === '') {
+    console.log('Message content is empty, ignoring.');
+    return;
+  }
+
   const collection = await dbService.getCollection('contact');
   const user = await collection.findOne({ _id: new ObjectId(userId) });
 
