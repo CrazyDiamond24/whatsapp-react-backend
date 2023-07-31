@@ -46,7 +46,7 @@ async function addMsg(req, res) {
   try {
     const userId = req.params.id
     const msg = req.body
-    console.log('**********userId controller ********', userId)
+    // console.log('**********userId controller ********', userId)
     const addedMsg = await userService.addMsg(userId, msg)
     res.send(addedMsg)
   } catch (err) {
