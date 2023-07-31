@@ -1,4 +1,5 @@
 const logger = require('./logger.service')
+const userService = require('../api/user/user.service')
 
 var gIo = null
 
@@ -13,27 +14,26 @@ function setupSocketAPI(http) {
     socket.on('disconnect', (socket) => {
       logger.info(`Socket disconnected [id: ${socket.id}]`)
     })
-    // socket.on('chat-set-topic', (topic) => {
-    //   if (socket.myTopic === topic) return
-    //   if (socket.myTopic) {
-    //     socket.leave(socket.myTopic)
-    //     logger.info(
-    //       `Socket is leaving topic ${socket.myTopic} [id: ${socket.id}]`
-    //     )
-    //   }
-    //   socket.join(topic)
-    //   socket.myTopic = topic
-    // })
-    socket.on('chat-send-msg', (msg) => {
+    socket.on('chat-set-topic', (topic) => {
+      logger.info(`Setting chat topic to ${topic} for socket [id: ${socket.id}]`); 
+      if (socket.myTopic === topic) return
+      if (socket.myTopic) {
+        socket.leave(socket.myTopic)
+        logger.info(`Socket is leaving topic ${socket.myTopic} [id: ${socket.id}]`);
+      }
+      socket.join(topic)
+      socket.myTopic = topic
+    })
+    
+    socket.on('chat-send-msg', async (msg) => {
       logger.info(
-        `New chat msg from socket [id: ${socket.id}], emitting to all`
+        `New chat msg from socket [id: ${socket.id}]`
       )
       logger.debug('Received message:', msg)
-      // emits to all sockets:
-      // gIo.emit('chat-add-msg', msg)
-      // emits only to sockets in the same room
-      gIo.emit('chat-add-msg', msg)
+
+      gIo.to(socket.myTopic).emit('chat-add-msg', msg)
     })
+
     socket.on('user-watch', (userId) => {
       logger.info(
         `user-watch from socket [id: ${socket.id}], on user ${userId}`
