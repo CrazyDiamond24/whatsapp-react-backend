@@ -32,7 +32,7 @@ function setupSocketAPI(http) {
       logger.debug('Received message:', msg)
 
       // Save the message for both sender and recipient
-      await userService.addMsg(msg.recipientId, msg)
+      // await userService.addMsg(msg.recipientId, msg)
 
       // Emit to all connected clients
       gIo.emit('chat-add-msg', msg)
