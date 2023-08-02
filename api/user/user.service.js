@@ -210,34 +210,35 @@ async function add(user) {
 async function addMsg(userId, msg) {
   // Check if the message content is empty and return if it is
   if (!msg.content || msg.content.trim() === '') {
-    console.log('Message content is empty, ignoring.');
-    return;
+    console.log('Message content is empty, ignoring.')
+    return
   }
 
-  const collection = await dbService.getCollection('contact');
-  const user = await collection.findOne({ _id: new ObjectId(userId) });
+  const collection = await dbService.getCollection('contact')
+  const user = await collection.findOne({ _id: new ObjectId(userId) })
 
-  if (!user.msgs) user.msgs = [];
+  if (!user.msgs) user.msgs = []
 
   // Check if the last message is a duplicate
-  const lastMsg = user.msgs[user.msgs.length - 1];
-  const isDuplicate = lastMsg &&
+  const lastMsg = user.msgs[user.msgs.length - 1]
+  const isDuplicate =
+    lastMsg &&
     lastMsg.content === msg.content &&
     lastMsg.senderId === msg.senderId &&
-    lastMsg.recipientId === msg.recipientId;
+    lastMsg.recipientId === msg.recipientId
 
   // If it's a duplicate, just return the message without updating the database
   if (isDuplicate) {
-    console.log('Duplicate message ignored:', msg.content);
-    return msg;
+    console.log('Duplicate message ignored:', msg.content)
+    return msg
   }
 
   // Add the msg to the array
-  user.msgs.push(msg);
+  user.msgs.push(msg)
 
   // Update the user in the database
-  await collection.updateOne({ _id: new ObjectId(userId) }, { $set: user });
-  return msg;
+  await collection.updateOne({ _id: new ObjectId(userId) }, { $set: user })
+  return msg
 }
 
 function _buildCriteria(filterBy) {

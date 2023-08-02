@@ -27,15 +27,21 @@ function setupSocketAPI(http) {
     // })
     socket.on('chat-send-msg', async (msg) => {
       logger.info(
-        `New chat msg from socket [id: ${socket.id}], emitting to all`
+        `New chat msg from socket [id: ${socket.id}], emitting to recipient`
       )
       logger.debug('Received message:', msg)
 
-      // Save the message for both sender and recipient
-      // await userService.addMsg(msg.recipientId, msg)
+      emitToUser({
+        type: 'chat-add-msg',
+        data: msg,
+        userId: msg.recipientId,
+      })
 
-      // Emit to all connected clients
-      gIo.emit('chat-add-msg', msg)
+      emitToUser({
+        type: 'chat-add-msg',
+        data: msg,
+        userId: msg.senderId,
+      })
     })
 
     socket.on('user-watch', (userId) => {
@@ -46,6 +52,7 @@ function setupSocketAPI(http) {
       logger.info(`Joined room: watching:${userId}`)
     })
     socket.on('set-user-socket', (userId) => {
+      logger.debug('userid in set user socket' , userId)
       logger.info(
         `Setting socket.userId = ${userId} for socket [id: ${socket.id}]`
       )
