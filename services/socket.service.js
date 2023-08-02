@@ -25,6 +25,12 @@ function setupSocketAPI(http) {
     //   socket.join(topic)
     //   socket.myTopic = topic
     // })
+    socket.on('typing', ({ userId, isTyping }) => {
+      if (userId) {
+        const message = isTyping ? 'is typing...' : ''
+        gIo.emit('user-typing', { userId, message })
+      }
+    })
     socket.on('chat-send-msg', async (msg) => {
       logger.info(
         `New chat msg from socket [id: ${socket.id}], emitting to recipient`
