@@ -65,6 +65,7 @@ function setupSocketAPI(http) {
       logger.info(
         `Setting socket.userId = ${userId} for socket [id: ${socket.id}]`
       )
+      socket.join(userId)
       socket.userId = userId
     })
     socket.on("unset-user-socket", () => {
