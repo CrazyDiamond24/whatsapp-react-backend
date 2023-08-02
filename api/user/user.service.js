@@ -166,8 +166,8 @@ async function updateMsg(msgId, senderId, recipientId) {
     const senderResult = await updateMessageContent(senderId)
     const recipientResult = await updateMessageContent(recipientId)
 
-    console.log('Sender result modified count:', senderResult)
-    console.log('Recipient result modified count:', recipientResult)
+    // console.log('Sender result modified count:', senderResult)
+    // console.log('Recipient result modified count:', recipientResult)
 
     if (senderResult === 1 && recipientResult === 1) {
       return 'Message content updated successfully for both sender and recipient'

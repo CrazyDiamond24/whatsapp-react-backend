@@ -25,9 +25,10 @@ function setupSocketAPI(http) {
     //   socket.join(topic)
     //   socket.myTopic = topic
     // })
-    socket.on('typing', ({ userId, isTyping }) => {
+    socket.on('typing', ({ userId, message }) => {
+      console.log('message', message)
       if (userId) {
-        const message = isTyping ? 'is typing...' : ''
+        console.log('message with userId', message)
         gIo.emit('user-typing', { userId, message })
       }
     })

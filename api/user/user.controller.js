@@ -68,7 +68,6 @@ async function updateMsg(req, res) {
 
 // backend controller
 async function getUserMessages(req, res) {
-  console.log('are you ever called?')
   try {
     const { userId, loggedInUserId } = req.params
 
