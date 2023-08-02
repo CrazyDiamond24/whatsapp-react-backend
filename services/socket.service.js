@@ -1,17 +1,17 @@
-const logger = require('./logger.service')
-const userService = require('../api/user/user.service')
+const logger = require("./logger.service")
+const userService = require("../api/user/user.service")
 
 var gIo = null
 
 function setupSocketAPI(http) {
-  gIo = require('socket.io')(http, {
+  gIo = require("socket.io")(http, {
     cors: {
-      origin: '*',
+      origin: "*",
     },
   })
-  gIo.on('connection', (socket) => {
+  gIo.on("connection", (socket) => {
     logger.info(`New connected socket [id: ${socket.id}]`)
-    socket.on('disconnect', (socket) => {
+    socket.on("disconnect", (socket) => {
       logger.info(`Socket disconnected [id: ${socket.id}]`)
     })
     // socket.on('chat-set-topic', (topic) => {
@@ -25,47 +25,49 @@ function setupSocketAPI(http) {
     //   socket.join(topic)
     //   socket.myTopic = topic
     // })
-    socket.on('typing', ({ userId, message }) => {
-      console.log('message', message)
-      if (userId) {
-        console.log('message with userId', message)
-        gIo.emit('user-typing', { userId, message })
+    socket.on("typing", ({ senderId, recipientId, isTyping }) => {
+      console.log("isTyping", isTyping)
+      if (senderId && recipientId) {
+        console.log("Sender is typing:", isTyping)
+        socket.broadcast
+          .to(recipientId)
+          .emit("user-typing", { userId: senderId, isTyping })
       }
     })
-    socket.on('chat-send-msg', async (msg) => {
+    socket.on("chat-send-msg", async (msg) => {
       logger.info(
         `New chat msg from socket [id: ${socket.id}], emitting to recipient`
       )
-      logger.debug('Received message:', msg)
+      logger.debug("Received message:", msg)
 
       emitToUser({
-        type: 'chat-add-msg',
+        type: "chat-add-msg",
         data: msg,
         userId: msg.recipientId,
       })
 
       emitToUser({
-        type: 'chat-add-msg',
+        type: "chat-add-msg",
         data: msg,
         userId: msg.senderId,
       })
     })
 
-    socket.on('user-watch', (userId) => {
+    socket.on("user-watch", (userId) => {
       logger.info(
         `user-watch from socket [id: ${socket.id}], on user ${userId}`
       )
-      socket.join('watching:' + userId)
+      socket.join("watching:" + userId)
       logger.info(`Joined room: watching:${userId}`)
     })
-    socket.on('set-user-socket', (userId) => {
-      logger.debug('userid in set user socket' , userId)
+    socket.on("set-user-socket", (userId) => {
+      logger.debug("userid in set user socket", userId)
       logger.info(
         `Setting socket.userId = ${userId} for socket [id: ${socket.id}]`
       )
       socket.userId = userId
     })
-    socket.on('unset-user-socket', () => {
+    socket.on("unset-user-socket", () => {
       logger.info(`Removing socket.userId for socket [id: ${socket.id}]`)
       delete socket.userId
     })
@@ -73,7 +75,7 @@ function setupSocketAPI(http) {
 }
 
 function emitTo({ type, data, label }) {
-  if (label) gIo.to('watching:' + label.toString()).emit(type, data)
+  if (label) gIo.to("watching:" + label.toString()).emit(type, data)
   else gIo.emit(type, data)
 }
 
