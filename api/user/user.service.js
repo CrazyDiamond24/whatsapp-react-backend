@@ -210,7 +210,6 @@ async function add(user) {
 async function addMsg(userId, msg) {
   // Check if the message content is empty and return if it is
   if (!msg.content || msg.content.trim() === '') {
-    console.log('Message content is empty, ignoring.')
     return
   }
 
@@ -229,7 +228,6 @@ async function addMsg(userId, msg) {
 
   // If it's a duplicate, just return the message without updating the database
   if (isDuplicate) {
-    console.log('Duplicate message ignored:', msg.content)
     return msg
   }
 
