@@ -13,6 +13,7 @@ module.exports = {
   addContact,
   removeContact,
   updateMsg,
+  addStory,
 }
 async function query(loggedInUserId) {
   try {
@@ -49,6 +50,15 @@ async function addContact(userId, contactName) {
   user.contacts.push(contact)
   await collection.updateOne({ _id: new ObjectId(userId) }, { $set: user })
   return contact
+}
+async function addStory(userId, url) {
+  const collection = await dbService.getCollection('contact')
+  const user = await collection.findOne({ _id: new ObjectId(userId) })
+
+  if (!user.story) user.story = []
+
+  user.story.push(url)
+  await collection.updateOne({ _id: new ObjectId(userId) }, { $set: user })
 }
 async function removeContact(userId, contactId) {
   try {

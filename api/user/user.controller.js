@@ -94,6 +94,17 @@ async function addContact(req, res) {
     res.status(500).send({ err: 'Failed to add contact' })
   }
 }
+async function addStory(req, res) {
+  try {
+    const userId = req.params.id
+    const url = req.body.url
+    const imgUrl = await userService.addStory(userId, url)
+    res.send(imgUrl)
+  } catch (err) {
+    logger.error('Failed to add contact', err)
+    res.status(500).send({ err: 'Failed to add contact' })
+  }
+}
 async function removeContact(req, res) {
   const { id, contactId } = req.params
   try {
@@ -114,4 +125,5 @@ module.exports = {
   removeContact,
   updateMsg,
   getUserMessages,
+  addStory,
 }
