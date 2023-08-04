@@ -64,7 +64,8 @@ async function addStory(userId, url) {
 
   if (!user.story) user.story = []
 
-  user.story.push(url)
+  const story = { url, createdAt: new Date() }
+  user.story.push(story)
   await collection.updateOne({ _id: new ObjectId(userId) }, { $set: user })
 }
 async function removeContact(userId, contactId) {

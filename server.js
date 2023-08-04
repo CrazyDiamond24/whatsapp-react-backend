@@ -2,6 +2,10 @@ const express = require('express')
 const cors = require('cors')
 const path = require('path')
 const cookieParser = require('cookie-parser')
+const cron = require('node-cron')
+const moment = require('moment')
+const dbService = require('./services/db.service')
+const { ObjectId } = require('mongodb') // Make sure this matches your MongoDB setup.
 
 const app = express()
 const http = require('http').createServer(app)
@@ -33,6 +37,26 @@ app.all('*', setupAsyncLocalStorage)
 app.use('/api/auth', authRoutes)
 app.use('/api/contact', userRoutes)
 setupSocketAPI(http)
+
+// Setup cron job to remove story URLs after 24 hours
+cron.schedule('0 * * * *', async () => {
+  // Runs every hour
+  const collection = await dbService.getCollection('contact')
+  const users = await collection.find().toArray()
+
+  users.forEach(async (user) => {
+    if (user.story && user.story.length) {
+      user.story = user.story.filter((story) => {
+        const storyAgeInHours = moment
+          .duration(moment().diff(story.createdAt))
+          .asHours()
+        return storyAgeInHours <= 24
+      })
+
+      await collection.updateOne({ _id: ObjectId(user._id) }, { $set: user })
+    }
+  })
+})
 
 // Make every server-side-route to match the index.html
 // so when requesting http://localhost:3030/index.html/car/123 it will still respond with

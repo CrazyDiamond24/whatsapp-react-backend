@@ -32,6 +32,7 @@ async function signup({
   status,
   groups,
   story,
+  userPref,
 }) {
   const saltRounds = 10
 
@@ -55,6 +56,7 @@ async function signup({
     status,
     groups,
     story,
+    userPref,
   })
 }
 
