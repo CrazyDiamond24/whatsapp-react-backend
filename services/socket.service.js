@@ -32,6 +32,13 @@ function setupSocketAPI(http) {
           .emit('user-typing', { userId: senderId, isTyping })
       }
     })
+    socket.on('recording', ({ senderId, recipientId, isRecording }) => {
+      if (senderId && recipientId) {
+        socket.broadcast
+          .to(recipientId)
+          .emit('user-recording', { userId: senderId, isRecording })
+      }
+    })
     socket.on('chat-send-msg', async (msg) => {
       logger.info(
         `New chat msg from socket [id: ${socket.id}], emitting to recipient`
