@@ -45,11 +45,18 @@ async function addContact(userId, contactName) {
 
   const contact = await collection.findOne({ username: contactName })
 
+  const contactToSave = {
+    _id: contact._id,
+    fullName: contact.fullName,
+    username: contact.username,
+    img: contact.img,
+  }
+
   if (!user.contacts) user.contacts = []
 
-  user.contacts.push(contact)
+  user.contacts.push(contactToSave)
   await collection.updateOne({ _id: new ObjectId(userId) }, { $set: user })
-  return contact
+  return contactToSave
 }
 async function addStory(userId, url) {
   const collection = await dbService.getCollection('contact')
@@ -124,14 +131,19 @@ async function update(user) {
   try {
     // peek only updatable properties
     const userToSave = {
-      _id: ObjectId(user._id), // needed for the returnd obj
       username: user.username,
       status: user.status,
       img: user.img,
     }
     const collection = await dbService.getCollection('contact')
-    await collection.updateOne({ _id: userToSave._id }, { $set: userToSave })
-    return userToSave
+
+    const updatedUser = await collection.findOneAndUpdate(
+      { _id: ObjectId(user._id) },
+      { $set: userToSave },
+      { returnOriginal: false }
+    )
+
+    return updatedUser
   } catch (err) {
     logger.error(`cannot update user ${user._id}`, err)
     throw err
