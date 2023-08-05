@@ -15,26 +15,35 @@ module.exports = {
   updateMsg,
   addStory,
 }
-async function query(loggedInUserId) {
+async function query() {
   try {
     const collection = await dbService.getCollection('contact')
     var contacts = await collection.find().toArray()
-    // const loggedInUser = await collection.findOne({
-    //   _id: ObjectId(loggedInUserId),
-    // })
-
-    // console.log('loggedInUser:', loggedInUser)
-    // console.log('loggedInUser.contacts:', loggedInUser.contacts)
-
-    // const contactsToReturn = contacts.filter((c) =>
-    //   loggedInUser.contacts?.map((contact) => contact._id === c._id)
-    // )
-
-    // console.log('contactsToReturn:', contactsToReturn)
-
     return contacts
   } catch (err) {
     logger.error('cannot find users', err)
+    throw err
+  }
+}
+async function update(user) {
+  try {
+    // peek only updatable properties
+    const userToSave = {
+      username: user.username,
+      status: user.status,
+      img: user.img,
+    }
+    const collection = await dbService.getCollection('contact')
+
+    const updatedUser = await collection.findOneAndUpdate(
+      { _id: ObjectId(user._id) },
+      { $set: userToSave },
+      { returnOriginal: false }
+    )
+
+    return updatedUser
+  } catch (err) {
+    logger.error(`cannot update user ${user._id}`, err)
     throw err
   }
 }
@@ -124,29 +133,6 @@ async function remove(userId) {
     await collection.deleteOne({ _id: ObjectId(userId) })
   } catch (err) {
     logger.error(`cannot remove user ${userId}`, err)
-    throw err
-  }
-}
-
-async function update(user) {
-  try {
-    // peek only updatable properties
-    const userToSave = {
-      username: user.username,
-      status: user.status,
-      img: user.img,
-    }
-    const collection = await dbService.getCollection('contact')
-
-    const updatedUser = await collection.findOneAndUpdate(
-      { _id: ObjectId(user._id) },
-      { $set: userToSave },
-      { returnOriginal: false }
-    )
-
-    return updatedUser
-  } catch (err) {
-    logger.error(`cannot update user ${user._id}`, err)
     throw err
   }
 }
