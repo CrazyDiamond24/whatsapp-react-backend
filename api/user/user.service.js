@@ -15,26 +15,35 @@ module.exports = {
   updateMsg,
   addStory,
 }
-async function query(loggedInUserId) {
+async function query() {
   try {
     const collection = await dbService.getCollection('contact')
     var contacts = await collection.find().toArray()
-    // const loggedInUser = await collection.findOne({
-    //   _id: ObjectId(loggedInUserId),
-    // })
-
-    // console.log('loggedInUser:', loggedInUser)
-    // console.log('loggedInUser.contacts:', loggedInUser.contacts)
-
-    // const contactsToReturn = contacts.filter((c) =>
-    //   loggedInUser.contacts?.map((contact) => contact._id === c._id)
-    // )
-
-    // console.log('contactsToReturn:', contactsToReturn)
-
     return contacts
   } catch (err) {
     logger.error('cannot find users', err)
+    throw err
+  }
+}
+async function update(user) {
+  try {
+    // peek only updatable properties
+    const userToSave = {
+      username: user.username,
+      status: user.status,
+      img: user.img,
+    }
+    const collection = await dbService.getCollection('contact')
+
+    const updatedUser = await collection.findOneAndUpdate(
+      { _id: ObjectId(user._id) },
+      { $set: userToSave },
+      { returnOriginal: false }
+    )
+
+    return updatedUser
+  } catch (err) {
+    logger.error(`cannot update user ${user._id}`, err)
     throw err
   }
 }
@@ -64,7 +73,8 @@ async function addStory(userId, url) {
 
   if (!user.story) user.story = []
 
-  user.story.push(url)
+  const story = { url, createdAt: new Date() }
+  user.story.push(story)
   await collection.updateOne({ _id: new ObjectId(userId) }, { $set: user })
 }
 async function removeContact(userId, contactId) {
@@ -123,29 +133,6 @@ async function remove(userId) {
     await collection.deleteOne({ _id: ObjectId(userId) })
   } catch (err) {
     logger.error(`cannot remove user ${userId}`, err)
-    throw err
-  }
-}
-
-async function update(user) {
-  try {
-    // peek only updatable properties
-    const userToSave = {
-      username: user.username,
-      status: user.status,
-      img: user.img,
-    }
-    const collection = await dbService.getCollection('contact')
-
-    const updatedUser = await collection.findOneAndUpdate(
-      { _id: ObjectId(user._id) },
-      { $set: userToSave },
-      { returnOriginal: false }
-    )
-
-    return updatedUser
-  } catch (err) {
-    logger.error(`cannot update user ${user._id}`, err)
     throw err
   }
 }
@@ -230,7 +217,6 @@ async function add(user) {
   }
 }
 async function addMsg(userId, msg) {
-  // Check if the message content is empty and return if it is
   if (!msg.content || msg.content.trim() === '') {
     return
   }
@@ -240,7 +226,6 @@ async function addMsg(userId, msg) {
 
   if (!user.msgs) user.msgs = []
 
-  // Check if the last message is a duplicate
   const lastMsg = user.msgs[user.msgs.length - 1]
   const isDuplicate =
     lastMsg &&
@@ -248,15 +233,12 @@ async function addMsg(userId, msg) {
     lastMsg.senderId === msg.senderId &&
     lastMsg.recipientId === msg.recipientId
 
-  // If it's a duplicate, just return the message without updating the database
+
   if (isDuplicate) {
     return msg
   }
 
-  // Add the msg to the array
   user.msgs.push(msg)
-
-  // Update the user in the database
   await collection.updateOne({ _id: new ObjectId(userId) }, { $set: user })
   return msg
 }
