@@ -231,7 +231,6 @@ async function add(user) {
   }
 }
 async function addMsg(userId, msg) {
-  // Check if the message content is empty and return if it is
   if (!msg.content || msg.content.trim() === '') {
     return
   }
@@ -241,7 +240,6 @@ async function addMsg(userId, msg) {
 
   if (!user.msgs) user.msgs = []
 
-  // Check if the last message is a duplicate
   const lastMsg = user.msgs[user.msgs.length - 1]
   const isDuplicate =
     lastMsg &&
@@ -249,15 +247,12 @@ async function addMsg(userId, msg) {
     lastMsg.senderId === msg.senderId &&
     lastMsg.recipientId === msg.recipientId
 
-  // If it's a duplicate, just return the message without updating the database
+
   if (isDuplicate) {
     return msg
   }
 
-  // Add the msg to the array
   user.msgs.push(msg)
-
-  // Update the user in the database
   await collection.updateOne({ _id: new ObjectId(userId) }, { $set: user })
   return msg
 }
