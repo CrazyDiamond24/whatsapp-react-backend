@@ -87,6 +87,7 @@ function setupSocketAPI(http) {
       socket.userId = userId
       onlineUsers[userId] = { isOnline: true, lastSeen: Date.now() }
       emitOnlineUsers()
+      console.log('onlineUsers', onlineUsers)
     })
     socket.on("unset-user-socket", () => {
       logger.info(`Removing socket.userId for socket [id: ${socket.id}]`)
@@ -176,6 +177,7 @@ function emitOnlineUsers() {
     const lastSeen = onlineUsers[userId].lastSeen
     return { id: userId, isOnline, lastSeen }
   })
+  console.log('onlineUsersData', onlineUsersData)
   gIo.emit("online-users", onlineUsersData)
 }
 
