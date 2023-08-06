@@ -15,6 +15,7 @@ module.exports = {
   updateMsg,
   addStory,
   updateUserPref,
+  updateLastSeen,
 }
 async function query() {
   try {
@@ -33,6 +34,7 @@ async function update(user) {
       username: user.username,
       status: user.status,
       img: user.img,
+      lastSeen: user.lastSeen,
     }
     const collection = await dbService.getCollection('contact')
 
@@ -52,6 +54,26 @@ async function updateUserPref(user) {
   try {
     const userToSave = {
       userPref: user.userPref,
+    }
+    const collection = await dbService.getCollection('contact')
+
+    const updatedUser = await collection.findOneAndUpdate(
+      { _id: ObjectId(user._id) },
+      { $set: userToSave },
+      { returnOriginal: false }
+    )
+
+    return updatedUser
+  } catch (err) {
+    logger.error(`cannot update user ${user._id}`, err)
+    throw err
+  }
+}
+async function updateLastSeen(user) {
+  console.log('user', user)
+  try {
+    const userToSave = {
+      lastSeen: user.lastSeen,
     }
     const collection = await dbService.getCollection('contact')
 

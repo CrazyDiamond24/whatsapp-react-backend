@@ -42,6 +42,16 @@ async function updateUser(req, res) {
     res.status(500).send({ err: 'Failed to update user' })
   }
 }
+async function updateUserLatSeen(req, res) {
+  try {
+    const user = req.body
+    const savedUser = await userService.updateLastSeen(user)
+    res.send(savedUser)
+  } catch (err) {
+    logger.error('Failed to update user', err)
+    res.status(500).send({ err: 'Failed to update user' })
+  }
+}
 async function updatePref(req, res) {
   try {
     const user = req.body
@@ -137,4 +147,5 @@ module.exports = {
   getUserMessages,
   addStory,
   updatePref,
+  updateUserLatSeen,
 }

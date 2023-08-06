@@ -14,6 +14,7 @@ const {
   updateMsg,
   addStory,
   updatePref,
+  updateUserLatSeen,
 } = require('./user.controller')
 const router = express.Router()
 
@@ -25,6 +26,8 @@ router.get('/:id', getUser)
 router.post('/:id/msg', addMsg)
 router.put('/msg/edit', updateMsg)
 router.put('/:id', updateUser)
+
+router.put('/:id/last-seen', updateUserLatSeen)
 router.put('/:id/pref', updatePref)
 router.delete('/:id', requireAuth, deleteUser)
 router.post('/:id/add-contact', addContact)
