@@ -14,6 +14,7 @@ module.exports = {
   removeContact,
   updateMsg,
   addStory,
+  updateUserPref,
 }
 async function query() {
   try {
@@ -32,6 +33,25 @@ async function update(user) {
       username: user.username,
       status: user.status,
       img: user.img,
+    }
+    const collection = await dbService.getCollection('contact')
+
+    const updatedUser = await collection.findOneAndUpdate(
+      { _id: ObjectId(user._id) },
+      { $set: userToSave },
+      { returnOriginal: false }
+    )
+
+    return updatedUser
+  } catch (err) {
+    logger.error(`cannot update user ${user._id}`, err)
+    throw err
+  }
+}
+async function updateUserPref(user) {
+  try {
+    const userToSave = {
+      userPref: user.userPref,
     }
     const collection = await dbService.getCollection('contact')
 
@@ -232,7 +252,6 @@ async function addMsg(userId, msg) {
     lastMsg.content === msg.content &&
     lastMsg.senderId === msg.senderId &&
     lastMsg.recipientId === msg.recipientId
-
 
   if (isDuplicate) {
     return msg
