@@ -19,7 +19,7 @@ module.exports = {
 async function query() {
   try {
     const collection = await dbService.getCollection('contact')
-    var contacts = await collection.find().toArray()
+    let contacts = await collection.find().toArray()
     return contacts
   } catch (err) {
     logger.error('cannot find users', err)
@@ -157,22 +157,6 @@ async function remove(userId) {
   }
 }
 
-// async function updateMsg(msgid, senderId) {
-//   try {
-//     const msg = {
-//       _id: ObjectId(user._id), // needed for the returnd obj
-//       fullname: user.fullname,
-//       score: user.score,
-//     }
-//     const collection = await dbService.getCollection('contact')
-//     await collection.updateOne({ _id: userToSave._id }, { $set: userToSave })
-//     return userToSave
-//   } catch (err) {
-//     logger.error(`cannot update user ${user._id}`, err)
-//     throw err
-//   }
-// }
-
 async function updateMsg(msgId, senderId, recipientId) {
   try {
     const collection = await dbService.getCollection('contact')
@@ -227,6 +211,7 @@ async function add(user) {
       groups: user.groups,
       contacts: user.contacts,
       msgs: user.msgs,
+      userPref: user.userPref,
     }
     const collection = await dbService.getCollection('contact')
     await collection.insertOne(userToAdd)
