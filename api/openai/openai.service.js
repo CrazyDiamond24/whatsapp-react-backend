@@ -13,8 +13,7 @@ const { Configuration, OpenAIApi } = require('openai')
 async function ask(msg) {
   try {
     const configuration = new Configuration({
-      // apiKey: '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', // Use environment variable for security
-      apiKey: process.env.REACT_APP_CHAT_GPT_API_KEY, // Use environment variable for security
+      apiKey: process.env.REACT_APP_CHAT_GPT_API_KEY,
     })
 
     const openai = new OpenAIApi(configuration)
