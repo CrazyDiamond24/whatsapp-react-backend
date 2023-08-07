@@ -28,6 +28,7 @@ if (process.env.NODE_ENV === 'production') {
 
 const authRoutes = require('./api/auth/auth.routes')
 const userRoutes = require('./api/user/user.routes')
+const openaiRoutes = require('./api/openai/openai.routes')
 const { setupSocketAPI } = require('./services/socket.service')
 
 // routes
@@ -36,6 +37,7 @@ app.all('*', setupAsyncLocalStorage)
 
 app.use('/api/auth', authRoutes)
 app.use('/api/contact', userRoutes)
+app.use('/api/openai', openaiRoutes)
 setupSocketAPI(http)
 
 // Setup cron job to remove story URLs after 24 hours
