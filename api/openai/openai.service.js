@@ -10,7 +10,7 @@ const { Configuration, OpenAIApi } = require('openai')
 // const readlineSync = require('readline-sync')
 // require('dotenv').config()
 
-async function ask(msg) {
+async function ask(msg, character) {
   try {
     const configuration = new Configuration({
       apiKey: process.env.REACT_APP_CHAT_GPT_API_KEY,
@@ -21,7 +21,7 @@ async function ask(msg) {
     const messages = [
       {
         role: 'system',
-        content: 'You are an intelligent system.',
+        content: character,
       },
       { role: 'user', content: msg.prompt },
     ]
