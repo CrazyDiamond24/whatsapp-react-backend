@@ -12,14 +12,19 @@ module.exports = {
 }
 
 async function login(username, password) {
-  logger.debug(`auth.service - login with username: ${username}`)
+  try {
+    logger.debug(`auth.service - login with username: ${username}`)
 
-  const user = await userService.getByUsername(username)
-  if (!user) throw new Error('Invalid username or password')
+    const user = await userService.getByUsername(username)
+    if (!user) throw new Error('Invalid username or password')
 
-  delete user.password
-  user._id = user._id.toString()
-  return user
+    delete user.password
+    user._id = user._id.toString()
+    return user
+  } catch (error) {
+    console.log('error in login', error)
+    throw error
+  }
 }
 
 async function signup({
