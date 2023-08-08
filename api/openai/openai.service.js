@@ -21,9 +21,9 @@ async function ask(msg, character) {
     const messages = [
       {
         role: 'system',
-        content: character,
+        content: `You are ${character}.`,
       },
-      { role: 'user', content: msg.prompt },
+      { role: 'user', content: msg },
     ]
 
     const response = await openai.createChatCompletion({

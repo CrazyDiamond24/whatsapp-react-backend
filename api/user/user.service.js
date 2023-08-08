@@ -32,6 +32,7 @@ async function update(user) {
     // peek only updatable properties
     const userToSave = {
       username: user.username,
+      fullName: user.fullName,
       status: user.status,
       img: user.img,
       lastSeen: user.lastSeen,
