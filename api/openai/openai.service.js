@@ -7,9 +7,6 @@ module.exports = {
 }
 
 const { Configuration, OpenAIApi } = require('openai')
-// const readlineSync = require('readline-sync')
-// require('dotenv').config()
-
 async function ask(msg, character) {
   try {
     const configuration = new Configuration({
