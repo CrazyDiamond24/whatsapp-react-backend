@@ -52,6 +52,17 @@ async function updateUserLatSeen(req, res) {
     res.status(500).send({ err: 'Failed to update user' })
   }
 }
+async function blockUnBlock(req, res) {
+  try {
+    const {actionType, loggedInUserId} = req.body
+    const userId = req.params.id
+    const savedUser = await userService.blockUnBlockUser(userId , actionType , loggedInUserId)
+    res.send(savedUser)
+  } catch (err) {
+    logger.error('Failed to update user', err)
+    res.status(500).send({ err: 'Failed to update user' })
+  }
+}
 async function updatePref(req, res) {
   try {
     const user = req.body
@@ -148,4 +159,5 @@ module.exports = {
   addStory,
   updatePref,
   updateUserLatSeen,
+  blockUnBlock,
 }

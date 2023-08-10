@@ -15,6 +15,7 @@ const {
   addStory,
   updatePref,
   updateUserLatSeen,
+  blockUnBlock,
 } = require('./user.controller')
 const router = express.Router()
 
@@ -28,6 +29,7 @@ router.put('/msg/edit', updateMsg)
 router.put('/:id', updateUser)
 
 router.put('/:id/last-seen', updateUserLatSeen)
+router.put('/:id/block-un-block', blockUnBlock)
 router.put('/:id/pref', updatePref)
 router.delete('/:id', requireAuth, deleteUser)
 router.post('/:id/add-contact', addContact)
