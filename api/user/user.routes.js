@@ -22,6 +22,7 @@ const router = express.Router()
 // middleware that is specific to this router
 // router.use(requireAuth)
 
+router.post('/:id/add-contact', addContact)
 router.get('/', getUsers)
 router.get('/:id', getUser)
 router.post('/:id/msg', addMsg)
@@ -32,7 +33,6 @@ router.put('/:id/last-seen', updateUserLatSeen)
 router.put('/:id/block-un-block', blockUnBlock)
 router.put('/:id/pref', updatePref)
 router.delete('/:id', requireAuth, deleteUser)
-router.post('/:id/add-contact', addContact)
 router.post('/:id/add-story', addStory)
 
 router.delete('/:id/remove-contact/:contactId', removeContact)
