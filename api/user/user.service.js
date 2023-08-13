@@ -96,19 +96,17 @@ async function blockUnBlockUser(userId, actionType, loggedInUserId) {
     const user = await getById(userId)
     const loggedInUser = await getById(loggedInUserId)
     const collection = await dbService.getCollection("contact")
-    console.log('actionType', actionType)
+    console.log("actionType", actionType)
     if (actionType === "BLOCK_USER") {
       user.blockedContcats.push(loggedInUserId)
       loggedInUser.blockedContcats.push(userId)
     } else {
-      console.log('else ahiii');
       user.blockedContcats = user.blockedContcats.filter(
-        (u) => u._id !== loggedInUserId
+        (u) => u !== loggedInUserId
       )
-      const filtered = loggedInUser.blockedContcats.filter(
-        (u) => u._id === userId
+      loggedInUser.blockedContcats = loggedInUser.blockedContcats.filter(
+        (u) => u !== userId
       )
-      console.log('filtered', filtered)
     }
     await collection.updateOne({ _id: new ObjectId(userId) }, { $set: user })
     await collection.updateOne(
