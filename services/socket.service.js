@@ -1,7 +1,7 @@
 const logger = require('./logger.service')
 const userService = require('../api/user/user.service')
-
-var gIo = null
+let gIo = null
+let SOCKET_EVENT_USER_UPDATED = 'user-updated'
 const onlineUsers = {}
 
 function setupSocketAPI(http) {
@@ -12,13 +12,10 @@ function setupSocketAPI(http) {
   })
   gIo.on('connection', (socket) => {
     logger.info(`New connected socket [id: ${socket.id}]`)
-    socket.on('disconnect', (socket) => {
+    socket.on('disconnect', async () => {
+      console.log('outttttttttttttttttttttttttttttttttttttttttttttttttttt')
       logger.info(`Socket disconnected [id: ${socket.id}]`)
-      const userId = getUserIdBySocketId(socket.id)
-      if (userId) {
-        onlineUsers[userId] = { isOnline: false, lastSeen: Date.now() }
-        emitOnlineUsers()
-      }
+      console.log('socket.iddsaaaaaaaaaaaaaaaaaaaaaaaa', socket.id)
     })
     // socket.on('chat-set-topic', (topic) => {
     //   if (socket.myTopic === topic) return
@@ -78,25 +75,44 @@ function setupSocketAPI(http) {
       socket.join('watching:' + userId)
       logger.info(`Joined room: watching:${userId}`)
     })
-    socket.on('set-user-socket', (userId) => {
+    socket.on('set-user-socket', async (userId) => {
       logger.debug('userid in set user socket', userId)
       logger.info(
         `Setting socket.userId = ${userId} for socket [id: ${socket.id}]`
       )
       socket.join(userId)
       socket.userId = userId
-      // console.log(
-      //   'onlineUsers beforeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee',
-      //   onlineUsers
-      // )
-      // onlineUsers[userId] = { isOnline: true }
-      // console.log('onlineUsers sfterrrrrrrrrrrrrrrrrrrrrrrrrrrrrr', onlineUsers)
-      emitOnlineUsers()
-      console.log('onlineUsers', onlineUsers)
+      await userService.updateUser(userId, {
+        isOnline: true,
+        lastSeen: new Date(),
+      })
+
+      // Emit to all clients that user's status changed
+      gIo.emit(SOCKET_EVENT_USER_UPDATED, {
+        userId,
+        isOnline: true,
+        lastSeen: new Date(),
+      })
     })
-    socket.on('unset-user-socket', () => {
-      logger.info(`Removing socket.userId for socket [id: ${socket.id}]`)
-      delete socket.userId
+    socket.on('unset-user-socket', async () => {
+      const userId = socket.userId
+      console.log(
+        'userIdfffffffffffffffffffffffffffffffffffffffffffffffff',
+        userId
+      )
+      if (userId) {
+        await userService.updateUser(userId, {
+          isOnline: false,
+          lastSeen: new Date(),
+        })
+        gIo.emit(SOCKET_EVENT_USER_UPDATED, {
+          userId,
+          isOnline: false,
+          lastSeen: new Date(),
+        })
+        logger.info(`Removing socket.userId for socket [id: ${socket.id}]`)
+        delete socket.userId
+      }
     })
   })
 }
@@ -164,14 +180,8 @@ function _printSocket(socket) {
 }
 
 function getUserIdBySocketId(socketId) {
-  for (const userId in onlineUsers) {
-    if (
-      gIo.sockets.sockets[socketId] &&
-      gIo.sockets.sockets[socketId].userId === userId
-    ) {
-      return userId
-    }
-  }
+  const socket = gIo.sockets.sockets[socketId]
+  if (socket) return socket.userId
   return null
 }
 
