@@ -39,7 +39,7 @@ async function updateUser(userId, updateObj) {
       { returnOriginal: false }
     )
 
-    return updatedUser.value 
+    return updatedUser.value
   } catch (err) {
     logger.error(`cannot update user ${userId}`, err)
     throw err
@@ -120,12 +120,11 @@ async function blockUnBlockUser(userId, actionType, loggedInUserId) {
     } else {
       console.log('else ahiii')
       user.blockedContcats = user.blockedContcats.filter(
-        (u) => u._id !== loggedInUserId
+        (u) => u !== loggedInUserId
       )
-      const filtered = loggedInUser.blockedContcats.filter(
-        (u) => u._id === userId
+      loggedInUser.blockedContcats = loggedInUser.blockedContcats.filter(
+        (u) => u !== userId
       )
-      console.log('filtered', filtered)
     }
     await collection.updateOne({ _id: new ObjectId(userId) }, { $set: user })
     await collection.updateOne(
