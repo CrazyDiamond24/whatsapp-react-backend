@@ -52,11 +52,26 @@ async function updateUserLatSeen(req, res) {
     res.status(500).send({ err: 'Failed to update user' })
   }
 }
+async function clearChat(req, res) {
+  try {
+    const { targetUserId, loggedInUserId } = req.body
+    console.log('hi clearrrrrrrrrrrrrrr')
+    await userService.clearChatBetweenUsers(targetUserId, loggedInUserId)
+    res.status(200).send({ message: 'Chat cleared successfully' })
+  } catch (err) {
+    logger.error('Failed to clear chat', err)
+    res.status(500).send({ err: 'Failed to clear chat' })
+  }
+}
 async function blockUnBlock(req, res) {
   try {
-    const {actionType, loggedInUserId} = req.body
+    const { actionType, loggedInUserId } = req.body
     const userId = req.params.id
-    const savedUser = await userService.blockUnBlockUser(userId , actionType , loggedInUserId)
+    const savedUser = await userService.blockUnBlockUser(
+      userId,
+      actionType,
+      loggedInUserId
+    )
     res.send(savedUser)
   } catch (err) {
     logger.error('Failed to update user', err)
@@ -160,4 +175,5 @@ module.exports = {
   updatePref,
   updateUserLatSeen,
   blockUnBlock,
+  clearChat,
 }

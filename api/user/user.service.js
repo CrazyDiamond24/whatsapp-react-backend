@@ -18,6 +18,7 @@ module.exports = {
   updateUserPref,
   updateLastSeen,
   blockUnBlockUser,
+  clearChatBetweenUsers,
 }
 async function query() {
   try {
@@ -26,6 +27,31 @@ async function query() {
     return contacts
   } catch (err) {
     logger.error('cannot find users', err)
+    throw err
+  }
+}
+async function clearChatBetweenUsers(targetUserId, loggedInUserId) {
+  try {
+    const collection = await dbService.getCollection('contact')
+    const updatedUser = await collection.findOneAndUpdate(
+      { _id: ObjectId(loggedInUserId) },
+      {
+        $pull: {
+          msgs: {
+            $or: [{ senderId: targetUserId }, { recipientId: targetUserId }],
+          },
+        },
+      },
+      { returnOriginal: false }
+    )
+
+    console.log('updatedUser.value', updatedUser.value)
+    return updatedUser.value
+  } catch (err) {
+    logger.error(
+      `cannot clear chat for user ${loggedInUserId} with target user ${targetUserId}`,
+      err
+    )
     throw err
   }
 }
