@@ -44,9 +44,7 @@ async function clearChatBetweenUsers(targetUserId, loggedInUserId) {
       },
       { returnOriginal: false }
     )
-
-    console.log('updatedUser.value', updatedUser.value)
-    return updatedUser.value
+    return updatedUser
   } catch (err) {
     logger.error(
       `cannot clear chat for user ${loggedInUserId} with target user ${targetUserId}`,
