@@ -16,6 +16,7 @@ const {
   updatePref,
   updateUserLatSeen,
   blockUnBlock,
+  clearChat,
 } = require('./user.controller')
 const router = express.Router()
 
@@ -28,7 +29,7 @@ router.get('/:id', getUser)
 router.post('/:id/msg', addMsg)
 router.put('/msg/edit', updateMsg)
 router.put('/:id', updateUser)
-
+router.post('/clear-chat', clearChat)
 router.put('/:id/last-seen', updateUserLatSeen)
 router.put('/:id/block-un-block', blockUnBlock)
 router.put('/:id/pref', updatePref)
