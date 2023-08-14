@@ -55,9 +55,10 @@ async function updateUserLatSeen(req, res) {
 async function clearChat(req, res) {
   try {
     const { targetUserId, loggedInUserId } = req.body
-    console.log('hi clearrrrrrrrrrrrrrr')
-    await userService.clearChatBetweenUsers(targetUserId, loggedInUserId)
-    res.status(200).send({ message: 'Chat cleared successfully' })
+   const user = await userService.clearChatBetweenUsers(targetUserId, loggedInUserId)
+   console.log('user', user.value.msgs) 
+  //  res.status(200).send({ message: 'Chat cleared successfully' })
+   res.send(user.value)
   } catch (err) {
     logger.error('Failed to clear chat', err)
     res.status(500).send({ err: 'Failed to clear chat' })
