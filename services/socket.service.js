@@ -1,21 +1,21 @@
-const logger = require("./logger.service")
-const userService = require("../api/user/user.service")
+const logger = require('./logger.service')
+const userService = require('../api/user/user.service')
 let gIo = null
-let SOCKET_EVENT_USER_UPDATED = "user-updated"
+let SOCKET_EVENT_USER_UPDATED = 'user-updated'
 const onlineUsers = {}
 
 function setupSocketAPI(http) {
-  gIo = require("socket.io")(http, {
+  gIo = require('socket.io')(http, {
     cors: {
-      origin: "*",
+      origin: '*',
     },
   })
-  gIo.on("connection", (socket) => {
+  gIo.on('connection', (socket) => {
     logger.info(`New connected socket [id: ${socket.id}]`)
-    socket.on("disconnect", async () => {
-      console.log("outttttttttttttttttttttttttttttttttttttttttttttttttttt")
+    socket.on('disconnect', async () => {
+      console.log('outttttttttttttttttttttttttttttttttttttttttttttttttttt')
       logger.info(`Socket disconnected [id: ${socket.id}]`)
-      console.log("socket.iddsaaaaaaaaaaaaaaaaaaaaaaaa", socket.id)
+      console.log('socket.iddsaaaaaaaaaaaaaaaaaaaaaaaa', socket.id)
     })
     // socket.on('chat-set-topic', (topic) => {
     //   if (socket.myTopic === topic) return
@@ -28,65 +28,65 @@ function setupSocketAPI(http) {
     //   socket.join(topic)
     //   socket.myTopic = topic
     // })
-    socket.on("typing", ({ senderId, recipientId, isTyping }) => {
+    socket.on('typing', ({ senderId, recipientId, isTyping }) => {
       if (senderId && recipientId) {
         socket.broadcast
           .to(recipientId)
-          .emit("user-typing", { userId: senderId, isTyping })
+          .emit('user-typing', { userId: senderId, isTyping })
       }
     })
-    socket.on("user-block-status-updated", (data) => {
+    socket.on('user-block-status-updated', (data) => {
       const { blockedUserId, action } = data
       logger.info(`User ${blockedUserId} is ${action}`)
       // Emit the event to all sockets except the affected user
       broadcast({
-        type: "user-block-status-updated",
+        type: 'user-block-status-updated',
         data: { blockedUserId, action },
         userId: blockedUserId,
       })
     })
-    socket.on("user-watch", (userId) => {
+    socket.on('user-watch', (userId) => {
       logger.info(
         `user-watch from socket [id: ${socket.id}], on user ${userId}`
       )
-      socket.join("watching:" + userId)
+      socket.join('watching:' + userId)
       logger.info(`Joined room: watching:${userId}`)
     })
-    socket.on("recording", ({ senderId, recipientId, isRecording }) => {
+    socket.on('recording', ({ senderId, recipientId, isRecording }) => {
       if (senderId && recipientId) {
         socket.broadcast
           .to(recipientId)
-          .emit("user-recording", { userId: senderId, isRecording })
+          .emit('user-recording', { userId: senderId, isRecording })
       }
     })
-    socket.on("chat-send-msg", async (msg) => {
+    socket.on('chat-send-msg', async (msg) => {
       logger.info(
         `New chat msg from socket [id: ${socket.id}], emitting to recipient`
       )
-      logger.debug("Received message:", msg)
+      logger.debug('Received message:', msg)
 
       emitToUser({
-        type: "chat-add-msg",
+        type: 'chat-add-msg',
         data: msg,
         userId: msg.recipientId,
       })
 
       emitToUser({
-        type: "chat-add-msg",
+        type: 'chat-add-msg',
         data: msg,
         userId: msg.senderId,
       })
     })
 
-    socket.on("user-watch", (userId) => {
+    socket.on('user-watch', (userId) => {
       logger.info(
         `user-watch from socket [id: ${socket.id}], on user ${userId}`
       )
-      socket.join("watching:" + userId)
+      socket.join('watching:' + userId)
       logger.info(`Joined room: watching:${userId}`)
     })
-    socket.on("set-user-socket", async (userId) => {
-      logger.debug("userid in set user socket", userId)
+    socket.on('set-user-socket', async (userId) => {
+      logger.debug('userid in set user socket', userId)
       logger.info(
         `Setting socket.userId = ${userId} for socket [id: ${socket.id}]`
       )
@@ -97,17 +97,16 @@ function setupSocketAPI(http) {
         lastSeen: new Date(),
       })
 
-      // Emit to all clients that user's status changed
       gIo.emit(SOCKET_EVENT_USER_UPDATED, {
         userId,
         isOnline: true,
         lastSeen: new Date(),
       })
     })
-    socket.on("unset-user-socket", async () => {
+    socket.on('unset-user-socket', async () => {
       const userId = socket.userId
       console.log(
-        "userIdfffffffffffffffffffffffffffffffffffffffffffffffff",
+        'userIdfffffffffffffffffffffffffffffffffffffffffffffffff',
         userId
       )
       if (userId) {
@@ -128,7 +127,7 @@ function setupSocketAPI(http) {
 }
 
 function emitTo({ type, data, label }) {
-  if (label) gIo.to("watching:" + label.toString()).emit(type, data)
+  if (label) gIo.to('watching:' + label.toString()).emit(type, data)
   else gIo.emit(type, data)
 }
 
@@ -202,8 +201,8 @@ function emitOnlineUsers() {
     const lastSeen = onlineUsers[userId].lastSeen
     return { id: userId, isOnline, lastSeen }
   })
-  console.log("onlineUsersData", onlineUsersData)
-  gIo.emit("online-users", onlineUsersData)
+  console.log('onlineUsersData', onlineUsersData)
+  gIo.emit('online-users', onlineUsersData)
 }
 
 module.exports = {
