@@ -6,7 +6,8 @@ const cron = require('node-cron')
 const moment = require('moment')
 const dbService = require('./services/db.service')
 const { ObjectId } = require('mongodb') // Make sure this matches your MongoDB setup.
-
+// const multer = require('multer')
+// const upload = multer({ dest: 'uploads/' })
 const app = express()
 const http = require('http').createServer(app)
 
@@ -30,6 +31,8 @@ const authRoutes = require('./api/auth/auth.routes')
 const userRoutes = require('./api/user/user.routes')
 const openaiRoutes = require('./api/openai/openai.routes')
 const imgAiRoutes = require('./api/ImgAi/img-ai.routes')
+const voiceAiRoutes = require('./api/VoiceAi/voice-ai.routes')
+
 const { setupSocketAPI } = require('./services/socket.service')
 
 // routes
@@ -40,6 +43,7 @@ app.use('/api/auth', authRoutes)
 app.use('/api/contact', userRoutes)
 app.use('/api/openai', openaiRoutes)
 app.use('/api/ImgAi', imgAiRoutes)
+app.use('/api/VoiceAi', voiceAiRoutes)
 
 setupSocketAPI(http)
 
