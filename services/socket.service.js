@@ -17,17 +17,7 @@ function setupSocketAPI(http) {
       logger.info(`Socket disconnected [id: ${socket.id}]`)
       console.log('socket.iddsaaaaaaaaaaaaaaaaaaaaaaaa', socket.id)
     })
-    // socket.on('chat-set-topic', (topic) => {
-    //   if (socket.myTopic === topic) return
-    //   if (socket.myTopic) {
-    //     socket.leave(socket.myTopic)
-    //     logger.info(
-    //       `Socket is leaving topic ${socket.myTopic} [id: ${socket.id}]`
-    //     )
-    //   }
-    //   socket.join(topic)
-    //   socket.myTopic = topic
-    // })
+
     socket.on('typing', ({ senderId, recipientId, isTyping }) => {
       if (senderId && recipientId) {
         socket.broadcast
