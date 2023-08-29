@@ -169,31 +169,31 @@ async function _getAllSockets() {
   return sockets
 }
 
-async function _printSockets() {
-  const sockets = await _getAllSockets()
-  console.log(`Sockets: (count: ${sockets.length}):`)
-  sockets.forEach(_printSocket)
-}
+// async function _printSockets() {
+//   const sockets = await _getAllSockets()
+//   console.log(`Sockets: (count: ${sockets.length}):`)
+//   sockets.forEach(_printSocket)
+// }
 function _printSocket(socket) {
   console.log(`Socket - socketId: ${socket.id} userId: ${socket.userId}`)
 }
 
-function getUserIdBySocketId(socketId) {
-  const socket = gIo.sockets.sockets[socketId]
-  if (socket) return socket.userId
-  return null
-}
+// function getUserIdBySocketId(socketId) {
+//   const socket = gIo.sockets.sockets[socketId]
+//   if (socket) return socket.userId
+//   return null
+// }
 
-function emitOnlineUsers() {
-  // Emit the 'online-users' event to update online status for clients
-  const onlineUsersData = Object.keys(onlineUsers).map((userId) => {
-    const isOnline = onlineUsers[userId].isOnline
-    const lastSeen = onlineUsers[userId].lastSeen
-    return { id: userId, isOnline, lastSeen }
-  })
-  console.log('onlineUsersData', onlineUsersData)
-  gIo.emit('online-users', onlineUsersData)
-}
+// function emitOnlineUsers() {
+//   // Emit the 'online-users' event to update online status for clients
+//   const onlineUsersData = Object.keys(onlineUsers).map((userId) => {
+//     const isOnline = onlineUsers[userId].isOnline
+//     const lastSeen = onlineUsers[userId].lastSeen
+//     return { id: userId, isOnline, lastSeen }
+//   })
+//   console.log('onlineUsersData', onlineUsersData)
+//   gIo.emit('online-users', onlineUsersData)
+// }
 
 module.exports = {
   // set up the sockets service and define the API
