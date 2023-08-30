@@ -1,10 +1,7 @@
 const express = require('express')
-const { generateText } = require('./voice-ai.controller')
-const multer = require('multer')
-const upload = multer({ dest: 'uploads/' })
-
+const { convertText } = require('./voice-ai.controller')
 const router = express.Router()
 
-router.post('/generate-text', upload.single('audio'), generateText)
+router.post('/convert-text', convertText)
 
 module.exports = router

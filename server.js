@@ -31,7 +31,10 @@ const authRoutes = require('./api/auth/auth.routes')
 const userRoutes = require('./api/user/user.routes')
 const openaiRoutes = require('./api/openai/openai.routes')
 const imgAiRoutes = require('./api/ImgAi/img-ai.routes')
+
 const voiceAiRoutes = require('./api/VoiceAi/voice-ai.routes')
+//... other code
+// app.use('/api/VoiceAi', voiceAiRoutes)
 
 const { setupSocketAPI } = require('./services/socket.service')
 

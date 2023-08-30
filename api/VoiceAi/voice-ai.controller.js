@@ -1,15 +1,15 @@
-const voiceaiService = require('./voice-ai.service')
+const { getTextToSpeechURL } = require('./voice-ai.service')
 
-async function generateText(req, res) {
-  console.log('req.file', req.file)
+const convertText = async (req, res) => {
   try {
-    const text = await voiceaiService.generateTextFromVoice(req.file)
-    res.send(text)
+    const text = req.body.text
+    console.log('text', text)
+    const url = await getTextToSpeechURL(text)
+    res.json(url)
   } catch (error) {
-    res.status(500).send({ error: error.message })
+    console.error('Error in voice-ai.controller:', error)
+    res.status(500).send({ error: 'Failed to convert text' })
   }
 }
 
-module.exports = {
-  generateText, // Updated here
-}
+module.exports = { convertText }

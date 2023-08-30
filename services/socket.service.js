@@ -13,9 +13,24 @@ function setupSocketAPI(http) {
   gIo.on('connection', (socket) => {
     logger.info(`New connected socket [id: ${socket.id}]`)
     socket.on('disconnect', async () => {
-      console.log('outttttttttttttttttttttttttttttttttttttttttttttttttttt')
-      logger.info(`Socket disconnected [id: ${socket.id}]`)
-      console.log('socket.iddsaaaaaaaaaaaaaaaaaaaaaaaa', socket.id)
+      const userId = socket.userId
+      console.log(
+        'userIdfffffffffffffffffffffffffffffffffffffffffffffffff',
+        userId
+      )
+      if (userId) {
+        await userService.updateUser(userId, {
+          isOnline: false,
+          lastSeen: new Date(),
+        })
+        gIo.emit(SOCKET_EVENT_USER_UPDATED, {
+          userId,
+          isOnline: false,
+          lastSeen: new Date(),
+        })
+        logger.info(`Removing socket.userId for socket [id: ${socket.id}]`)
+        delete socket.userId
+      }
     })
 
     socket.on('typing', ({ senderId, recipientId, isTyping }) => {

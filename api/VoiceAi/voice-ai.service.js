@@ -1,85 +1,61 @@
-const axios = require('axios')
-const { Storage } = require('@google-cloud/storage')
 require('dotenv').config()
+const cloudinary = require('cloudinary').v2
+const DatauriParser = require('datauri/parser')
+const parser = new DatauriParser()
 
-const API_VOICE_URL = 'https://speech.googleapis.com/v1/speech:recognize'
-const API_KEY = process.env.GOOGLE_CLOUD_API_KEY
-const BUCKET_NAME = 'wuzzappbucket' // replace with your GCS bucket name
-
-const storage = new Storage({
-  keyFilename: 'e0ad71e83e887b1185263daa2a9ca8a3b250926f.json',
+cloudinary.config({
+  cloud_name: process.env.VITE_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
 })
 
-async function generateTextFromVoice(file) {
-  const audioData = file.buffer
-
-  const gcsUri = await uploadToGCS(audioData)
-
-  const requestBody = {
-    config: {
-      encoding: 'LINEAR16',
-      sampleRateHertz: 16000,
-      languageCode: 'en-US',
-    },
-    audio: {
-      uri: gcsUri,
-    },
-  }
-
+async function getTextToSpeechURL(msg) {
   try {
-    const response = await axios.post(
-      `${API_VOICE_URL}?key=${API_KEY}`,
-      requestBody,
+    const response = await fetch(
+      `https://api.elevenlabs.io/v1/text-to-speech/21m00Tcm4TlvDq8ikWAM`,
       {
+        method: 'POST',
         headers: {
+          accept: 'audio/mpeg',
           'Content-Type': 'application/json',
+          'xi-api-key': process.env.TEXT_TO_SPEECH_API_KEY,
         },
+        body: JSON.stringify({
+          text: msg,
+          voice_settings: {
+            stability: 0,
+            similarity_boost: 0,
+          },
+        }),
       }
     )
 
-    if (
-      response.data &&
-      response.data.results &&
-      response.data.results.length > 0
-    ) {
-      return response.data.results[0].alternatives[0].transcript
+    if (!response.ok) {
+      throw new Error('Something went wrong')
     }
-    throw new Error('Failed to transcribe voice.')
+
+    const arrayBuffer = await response.arrayBuffer()
+    const buffer = Buffer.from(arrayBuffer)
+    const file = Math.random().toString(36).substring(7)
+    const dataUri = parser.format('.mp3', buffer)
+
+    const cloudinaryResponse = await cloudinary.uploader.upload(
+      dataUri.content,
+      {
+        resource_type: 'video',
+        public_id: `UserAudio/${file}.mp3`,
+        upload_preset: process.env.REACT_APP_VITE_UPLOAD_PRESET,
+      }
+    )
+
+    if (cloudinaryResponse && cloudinaryResponse.url) {
+      return { file: cloudinaryResponse.url }
+    } else {
+      throw new Error('Failed to upload to Cloudinary')
+    }
   } catch (error) {
-    console.log('Error:', error) // This
-    console.error('Error response from Google API:', error.response.data)
-    throw error
+    console.error('API Request Error:', error)
   }
 }
 
-async function downloadAudio(url) {
-  try {
-    const response = await axios.get(url, {
-      responseType: 'arraybuffer', // This is crucial for binary files like audio
-    })
-    console.log('Downloaded audio data:', !!response.data)
-    return response.data
-  } catch (error) {
-    console.error('Error downloading audio:', error)
-    throw error
-  }
-}
-
-async function uploadToGCS(audioData) {
-  const fileName = `audio-${Date.now()}.opus`
-  const bucket = storage.bucket(BUCKET_NAME)
-  const file = bucket.file(fileName)
-
-  try {
-    await file.save(audioData)
-    console.log('Successfully uploaded to GCS.')
-    return `gs://${BUCKET_NAME}/${fileName}`
-  } catch (error) {
-    console.error('Error while uploading to GCS:', error)
-    throw error
-  }
-}
-
-module.exports = {
-  generateTextFromVoice,
-}
+module.exports = { getTextToSpeechURL }
