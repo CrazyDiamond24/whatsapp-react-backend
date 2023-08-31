@@ -2,9 +2,9 @@ const { getTextToSpeechURL } = require('./voice-ai.service')
 
 const convertText = async (req, res) => {
   try {
-    const text = req.body.text
+    const { text, voice } = req.body
     console.log('text', text)
-    const url = await getTextToSpeechURL(text)
+    const url = await getTextToSpeechURL(text, voice)
     res.json(url)
   } catch (error) {
     console.error('Error in voice-ai.controller:', error)

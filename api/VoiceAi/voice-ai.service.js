@@ -9,10 +9,10 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 })
 
-async function getTextToSpeechURL(msg) {
+async function getTextToSpeechURL(msg, voice) {
   try {
     const response = await fetch(
-      `https://api.elevenlabs.io/v1/text-to-speech/21m00Tcm4TlvDq8ikWAM`,
+      `https://api.elevenlabs.io/v1/text-to-speech/${voice}`,
       {
         method: 'POST',
         headers: {
