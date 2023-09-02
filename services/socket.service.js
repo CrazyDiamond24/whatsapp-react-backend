@@ -2,6 +2,7 @@ const logger = require('./logger.service')
 const userService = require('../api/user/user.service')
 let gIo = null
 let SOCKET_EVENT_USER_UPDATED = 'user-updated'
+let SOCKET_EVENT_USER_UPDATED_ADDED_STORY = 'user-updated-added-story'
 const onlineUsers = {}
 
 function setupSocketAPI(http) {
@@ -106,6 +107,22 @@ function setupSocketAPI(http) {
         userId,
         isOnline: true,
         lastSeen: new Date(),
+      })
+    })
+    socket.on('added-story-socket', async (userId) => {
+      logger.debug('userid in set user socket', userId)
+      logger.info(
+        `Setting socket.userId = ${userId} for socket [id: ${socket.id}]`
+      )
+      socket.join(userId)
+      socket.userId = userId
+      await userService.updateUser(userId, {
+        haveStory: true,
+      })
+
+      gIo.emit(SOCKET_EVENT_USER_UPDATED_ADDED_STORY, {
+        userId,
+        haveStory: true,
       })
     })
     socket.on('unset-user-socket', async () => {
