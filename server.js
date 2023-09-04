@@ -67,6 +67,9 @@ cron.schedule('0 * * * *', async () => {
           .asHours()
         return storyAgeInHours <= 24
       })
+      if (user.story.length === 0) {
+        user.haveStory = false
+      }
 
       await collection.updateOne({ _id: ObjectId(user._id) }, { $set: user })
     }
