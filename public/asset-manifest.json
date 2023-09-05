@@ -1,0 +1,28 @@
+{
+  "files": {
+    "main.css": "/WhatsApp-React/static/css/main.ecc12c8e.css",
+    "main.js": "/WhatsApp-React/static/js/main.b4bb1602.js",
+    "static/js/787.2a82ac87.chunk.js": "/WhatsApp-React/static/js/787.2a82ac87.chunk.js",
+    "static/media/chat-bot.png": "/WhatsApp-React/static/media/chat-bot.288bcbd9e49e1ac9e259.png",
+    "static/media/chat-people.png": "/WhatsApp-React/static/media/chat-people.4c6e967e13ef01b60797.png",
+    "static/media/add-illustration.png": "/WhatsApp-React/static/media/add-illustration.c3e806bc1bc7f8d0da04.png",
+    "static/media/Caveat.ttf": "/WhatsApp-React/static/media/Caveat.834178e16d110b21c85e.ttf",
+    "static/media/Merriweather-Bold.ttf": "/WhatsApp-React/static/media/Merriweather-Bold.ae39f743fdcf8f64531e.ttf",
+    "static/media/texting.svg": "/WhatsApp-React/static/media/texting.2179e7bb33eb664573378776507cf730.svg",
+    "static/media/Tangerine-Bold.ttf": "/WhatsApp-React/static/media/Tangerine-Bold.290f181679aa2ef327e4.ttf",
+    "static/media/GloriaHallelujah-Regular.ttf": "/WhatsApp-React/static/media/GloriaHallelujah-Regular.c9da976c6f9088d1b3c9.ttf",
+    "static/media/story-placeholder.png": "/WhatsApp-React/static/media/story-placeholder.36bbc0c5b46c5d42e0df.png",
+    "static/media/gifIcon.svg": "/WhatsApp-React/static/media/gifIcon.9692646721ad3891b1c6810d7793d95d.svg",
+    "static/media/emojiIcon.svg": "/WhatsApp-React/static/media/emojiIcon.87d7b5fee37fa9b04d31eb50d012173e.svg",
+    "index.html": "/WhatsApp-React/index.html",
+    "static/media/searchIcon.svg": "/WhatsApp-React/static/media/searchIcon.9e3f6c70f267886d7df83bd287c5bc1b.svg",
+    "static/media/plusWhatsapp.svg": "/WhatsApp-React/static/media/plusWhatsapp.461c9286e81c27cb9503caaa4050580e.svg",
+    "main.ecc12c8e.css.map": "/WhatsApp-React/static/css/main.ecc12c8e.css.map",
+    "main.b4bb1602.js.map": "/WhatsApp-React/static/js/main.b4bb1602.js.map",
+    "787.2a82ac87.chunk.js.map": "/WhatsApp-React/static/js/787.2a82ac87.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.ecc12c8e.css",
+    "static/js/main.b4bb1602.js"
+  ]
+}
