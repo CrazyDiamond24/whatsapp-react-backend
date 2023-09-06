@@ -36,6 +36,5 @@ async function ask(msg, character) {
       'Error in OpenAI service:',
       error.response ? error.response.data.error : error
     )
-    // logger.error(...)  // You can keep this if you have a logging system in place
   }
 }

@@ -60,6 +60,8 @@ cron.schedule('0 * * * *', async () => {
   const users = await collection.find().toArray()
 
   users.forEach(async (user) => {
+    if (user.username === 'gpt') return
+
     if (user.story && user.story.length) {
       user.story = user.story.filter((story) => {
         const storyAgeInHours = moment
