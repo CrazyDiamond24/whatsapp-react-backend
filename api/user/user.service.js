@@ -54,6 +54,7 @@ async function clearChatBetweenUsers(targetUserId, loggedInUserId) {
   }
 }
 async function updateUser(userId, updateObj) {
+  console.log('updatedObj', updateObj)
   try {
     const collection = await dbService.getCollection('contact')
 
@@ -62,8 +63,9 @@ async function updateUser(userId, updateObj) {
       { $set: updateObj },
       { returnOriginal: false }
     )
-
-    return updatedUser.value
+    const user = updatedUser.value
+    console.log('updatedUser.value', updatedUser.value)
+    return user
   } catch (err) {
     logger.error(`cannot update user ${userId}`, err)
     throw err

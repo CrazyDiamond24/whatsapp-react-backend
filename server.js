@@ -5,14 +5,11 @@ const cookieParser = require('cookie-parser')
 const cron = require('node-cron')
 const moment = require('moment')
 const dbService = require('./services/db.service')
-const { ObjectId } = require('mongodb') // Make sure this matches your MongoDB setup.
-// const multer = require('multer')
-// const upload = multer({ dest: 'uploads/' })
+const { ObjectId } = require('mongodb')
+
 const app = express()
 const http = require('http').createServer(app)
-// const multer = require('multer')
-// const upload = multer({ dest: 'uploads/' })
-// Express App Config
+
 app.use(cookieParser())
 app.use(express.json({ limit: '50mb' }))
 app.use(express.urlencoded({ limit: '50mb', extended: true }))
@@ -35,12 +32,9 @@ const imgAiRoutes = require('./api/ImgAi/img-ai.routes')
 const textAi = require('./api/TextAi/text-ai.routes')
 
 const voiceAiRoutes = require('./api/VoiceAi/voice-ai.routes')
-//... other code
-// app.use('/api/VoiceAi', voiceAiRoutes)
 
 const { setupSocketAPI } = require('./services/socket.service')
 
-// routes
 const setupAsyncLocalStorage = require('./middlewares/setupAls.middleware')
 app.all('*', setupAsyncLocalStorage)
 
@@ -53,16 +47,14 @@ app.use('/api/VoiceAi', voiceAiRoutes)
 
 setupSocketAPI(http)
 
-// Setup cron job to remove story URLs after 24 hours
 cron.schedule('0 * * * *', async () => {
-  // Runs every hour
   const collection = await dbService.getCollection('contact')
   const users = await collection.find().toArray()
 
   users.forEach(async (user) => {
-    if (user.username === 'gpt') return
+    if (user.fullName === 'gpt') return
 
-    if (user.story && user.story.length) {
+    if (user?.story?.length > 0) {
       user.story = user.story.filter((story) => {
         const storyAgeInHours = moment
           .duration(moment().diff(story.createdAt))
@@ -78,9 +70,6 @@ cron.schedule('0 * * * *', async () => {
   })
 })
 
-// Make every server-side-route to match the index.html
-// so when requesting http://localhost:3030/index.html/car/123 it will still respond with
-// our SPA (single page app) (the index.html file) and allow vue/react-router to take it from there
 app.get('/**', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'))
 })
@@ -90,11 +79,3 @@ const port = process.env.PORT || 3030
 http.listen(port, () => {
   logger.info('Server is running on port: ' + port)
 })
-// onst port = process.env.PORT || 3030;
-// app.get('/**', (req, res) => {
-//     res.sendFile(path.join(__dirname, 'public', 'index.html
-// '));
-// })
-// app.listen(port, () => {
-//  console.log(`App listening on port ${port}!`)
-// });

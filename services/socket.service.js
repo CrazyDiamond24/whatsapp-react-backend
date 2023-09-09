@@ -22,12 +22,12 @@ function setupSocketAPI(http) {
       if (userId) {
         await userService.updateUser(userId, {
           isOnline: false,
-          lastSeen: new Date(),
+          lastSeen: Date.now(),
         })
         gIo.emit(SOCKET_EVENT_USER_UPDATED, {
           userId,
           isOnline: false,
-          lastSeen: new Date(),
+          lastSeen: Date.now(),
         })
         logger.info(`Removing socket.userId for socket [id: ${socket.id}]`)
         delete socket.userId
@@ -100,13 +100,13 @@ function setupSocketAPI(http) {
       socket.userId = userId
       await userService.updateUser(userId, {
         isOnline: true,
-        lastSeen: new Date(),
+        lastSeen: Date.now(),
       })
 
       gIo.emit(SOCKET_EVENT_USER_UPDATED, {
         userId,
         isOnline: true,
-        lastSeen: new Date(),
+        lastSeen: Date.now(),
       })
     })
     socket.on('added-story-socket', async (userId) => {
@@ -132,14 +132,15 @@ function setupSocketAPI(http) {
         userId
       )
       if (userId) {
-        await userService.updateUser(userId, {
+        const updatedUser = await userService.updateUser(userId, {
           isOnline: false,
-          lastSeen: new Date(),
+          lastSeen: Date.now(),
         })
         gIo.emit(SOCKET_EVENT_USER_UPDATED, {
-          userId,
-          isOnline: false,
-          lastSeen: new Date(),
+          // userId,
+          // isOnline: false,
+          updatedUser,
+          // lastSeen: Date.now(),
         })
         logger.info(`Removing socket.userId for socket [id: ${socket.id}]`)
         delete socket.userId
