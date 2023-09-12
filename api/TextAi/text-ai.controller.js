@@ -3,7 +3,6 @@ const { processAudio } = require('./text-ai.service')
 const convertAudio = async (req, res) => {
   try {
     const audioFile = req.body
-    console.log('audioFile', audioFile)
     const text = await processAudio(audioFile)
     res.json({ text: text })
   } catch (error) {

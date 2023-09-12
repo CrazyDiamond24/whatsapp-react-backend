@@ -3,7 +3,6 @@ const { getTextToSpeechURL } = require('./voice-ai.service')
 const convertText = async (req, res) => {
   try {
     const { text, voice } = req.body
-    console.log('text', text)
     const url = await getTextToSpeechURL(text, voice)
     res.json(url)
   } catch (error) {
