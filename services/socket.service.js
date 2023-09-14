@@ -3,7 +3,6 @@ const userService = require('../api/user/user.service')
 let gIo = null
 let SOCKET_EVENT_USER_UPDATED = 'user-updated'
 let SOCKET_EVENT_USER_UPDATED_ADDED_STORY = 'user-updated-added-story'
-const onlineUsers = {}
 
 function setupSocketAPI(http) {
   gIo = require('socket.io')(http, {
@@ -15,10 +14,6 @@ function setupSocketAPI(http) {
     logger.info(`New connected socket [id: ${socket.id}]`)
     socket.on('disconnect', async () => {
       const userId = socket.userId
-      console.log(
-        'userIdfffffffffffffffffffffffffffffffffffffffffffffffff',
-        userId
-      )
       if (userId) {
         await userService.updateUser(userId, {
           isOnline: false,
@@ -127,20 +122,13 @@ function setupSocketAPI(http) {
     })
     socket.on('unset-user-socket', async () => {
       const userId = socket.userId
-      console.log(
-        'userIdfffffffffffffffffffffffffffffffffffffffffffffffff',
-        userId
-      )
       if (userId) {
         const updatedUser = await userService.updateUser(userId, {
           isOnline: false,
           lastSeen: Date.now(),
         })
         gIo.emit(SOCKET_EVENT_USER_UPDATED, {
-          // userId,
-          // isOnline: false,
           updatedUser,
-          // lastSeen: Date.now(),
         })
         logger.info(`Removing socket.userId for socket [id: ${socket.id}]`)
         delete socket.userId
@@ -202,31 +190,10 @@ async function _getAllSockets() {
   return sockets
 }
 
-// async function _printSockets() {
-//   const sockets = await _getAllSockets()
-//   console.log(`Sockets: (count: ${sockets.length}):`)
-//   sockets.forEach(_printSocket)
-// }
+
 function _printSocket(socket) {
   console.log(`Socket - socketId: ${socket.id} userId: ${socket.userId}`)
 }
-
-// function getUserIdBySocketId(socketId) {
-//   const socket = gIo.sockets.sockets[socketId]
-//   if (socket) return socket.userId
-//   return null
-// }
-
-// function emitOnlineUsers() {
-//   // Emit the 'online-users' event to update online status for clients
-//   const onlineUsersData = Object.keys(onlineUsers).map((userId) => {
-//     const isOnline = onlineUsers[userId].isOnline
-//     const lastSeen = onlineUsers[userId].lastSeen
-//     return { id: userId, isOnline, lastSeen }
-//   })
-//   console.log('onlineUsersData', onlineUsersData)
-//   gIo.emit('online-users', onlineUsersData)
-// }
 
 module.exports = {
   // set up the sockets service and define the API

@@ -3,7 +3,6 @@ const openaiService = require('./img-ai.service')
 async function generateImage(req, res) {
   try {
     const { prompt } = req.body
-    console.log('prompt', prompt)
     const url = await openaiService.generateImageFromText(prompt)
     res.send(url)
   } catch (error) {
