@@ -29,7 +29,7 @@ const authRoutes = require('./api/auth/auth.routes')
 const userRoutes = require('./api/user/user.routes')
 const openaiRoutes = require('./api/openai/openai.routes')
 const imgAiRoutes = require('./api/ImgAi/img-ai.routes')
-const textAi = require('./api/TextAi/text-ai.routes')
+// const textAi = require('./api/TextAi/text-ai.routes')
 
 const voiceAiRoutes = require('./api/VoiceAi/voice-ai.routes')
 
@@ -42,7 +42,7 @@ app.use('/api/auth', authRoutes)
 app.use('/api/contact', userRoutes)
 app.use('/api/openai', openaiRoutes)
 app.use('/api/ImgAi', imgAiRoutes)
-app.use('/api/TextAi', textAi)
+// app.use('/api/TextAi', textAi)
 app.use('/api/VoiceAi', voiceAiRoutes)
 
 setupSocketAPI(http)
