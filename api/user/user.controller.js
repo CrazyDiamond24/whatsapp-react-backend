@@ -56,7 +56,6 @@ async function clearChat(req, res) {
   try {
     const { targetUserId, loggedInUserId } = req.body
    const user = await userService.clearChatBetweenUsers(targetUserId, loggedInUserId)
-   console.log('user', user.value.msgs) 
   //  res.status(200).send({ message: 'Chat cleared successfully' })
    res.send(user.value)
   } catch (err) {
@@ -93,7 +92,6 @@ async function addMsg(req, res) {
   try {
     const userId = req.params.id
     const msg = req.body
-    // console.log('**********userId controller ********', userId)
     const addedMsg = await userService.addMsg(userId, msg)
     res.send(addedMsg)
   } catch (err) {

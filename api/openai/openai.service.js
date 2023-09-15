@@ -29,7 +29,6 @@ async function ask(msg, character) {
     })
 
     let reply = response.data.choices[0].message.content
-    console.log('reply', reply)
     return reply
   } catch (error) {
     console.error(

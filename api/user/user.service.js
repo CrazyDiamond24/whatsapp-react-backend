@@ -54,7 +54,6 @@ async function clearChatBetweenUsers(targetUserId, loggedInUserId) {
   }
 }
 async function updateUser(userId, updateObj) {
-  console.log('updatedObj', updateObj)
   try {
     const collection = await dbService.getCollection('contact')
 
@@ -64,7 +63,6 @@ async function updateUser(userId, updateObj) {
       { returnOriginal: false }
     )
     const user = updatedUser.value
-    console.log('updatedUser.value', updatedUser.value)
     return user
   } catch (err) {
     logger.error(`cannot update user ${userId}`, err)
@@ -115,7 +113,6 @@ async function updateUserPref(user) {
   }
 }
 async function updateLastSeen(user) {
-  console.log('user', user)
   try {
     const userToSave = {
       lastSeen: user.lastSeen,
@@ -139,12 +136,10 @@ async function blockUnBlockUser(userId, actionType, loggedInUserId) {
     const user = await getById(userId)
     const loggedInUser = await getById(loggedInUserId)
     const collection = await dbService.getCollection('contact')
-    console.log('actionType', actionType)
     if (actionType === 'BLOCK_USER') {
       user.blockedContcats.push(loggedInUserId)
       loggedInUser.blockedContcats.push(userId)
     } else {
-      console.log('else ahiii')
       user.blockedContcats = user.blockedContcats.filter(
         (u) => u !== loggedInUserId
       )
@@ -282,9 +277,6 @@ async function updateMsg(msgId, senderId, recipientId) {
 
     const senderResult = await updateMessageContent(senderId)
     const recipientResult = await updateMessageContent(recipientId)
-
-    // console.log('Sender result modified count:', senderResult)
-    // console.log('Recipient result modified count:', recipientResult)
 
     if (senderResult === 1 && recipientResult === 1) {
       return 'Message content updated successfully for both sender and recipient'

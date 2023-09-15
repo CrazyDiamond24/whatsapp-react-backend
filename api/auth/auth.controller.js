@@ -6,6 +6,7 @@ async function login(req, res) {
   try {
     const user = await authService.login(username, password)
     const loginToken = authService.getLoginToken(user)
+    // very long
     logger.info('User login: ', user)
     res.cookie('loginToken', loginToken, { sameSite: 'None', secure: true })
     res.json(user)
@@ -25,6 +26,7 @@ async function signup(req, res) {
       credentials.username,
       credentials.password
     )
+    // too long
     logger.info('User signup:', user)
     const loginToken = authService.getLoginToken(user)
     res.cookie('loginToken', loginToken, { sameSite: 'None', secure: true })
