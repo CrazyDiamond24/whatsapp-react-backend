@@ -48,7 +48,7 @@ async function getTextToSpeechURL(msg, voice) {
       }
     )
 
-    if (cloudinaryResponse && cloudinaryResponse.url) {
+    if (cloudinaryResponse?.url) {
       return { file: cloudinaryResponse.url }
     } else {
       throw new Error('Failed to upload to Cloudinary')

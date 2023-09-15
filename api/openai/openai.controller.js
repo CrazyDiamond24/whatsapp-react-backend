@@ -4,6 +4,7 @@ const logger = require('../../services/logger.service')
 async function askGpt(req, res) {
   try {
     const { prompt, character } = req.body
+    console.log('character', character)
     const reply = await openaiService.ask(prompt, character)
     res.send(reply)
   } catch (err) {
